@@ -3,5 +3,26 @@
     "express": "^4.19.2",
     "mongoose": "^8.4.0",
     "nodemon": "^3.1.0"
-  }
+  },
+  "name": "apiproject",
+  "version": "1.0.0",
+  "description": "assignment6003cem",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/p22014675/WebAPI.git"
+  },
+  "keywords": [
+    "webapiassignment"
+  ],
+  "author": "p22014675",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/p22014675/WebAPI/issues"
+  },
+  "homepage": "https://github.com/p22014675/WebAPI#readme"
 }
