@@ -10,28 +10,64 @@ app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
 
-
-app.get('/api/manga', async (req, res) => {
+// Fetch manga data
+const fetchMangaData = async (queryParams) => {
   try {
-    const response = await axios.get('https://api.mangadex.org/manga');
-    const mangaList = response.data.data; // Extract the manga data from the response
-
-    // Send the manga data as a JSON response
-    res.json(mangaList);
-    //res.send(mangaList);
+    const response = await axios.get('https://api.mangadex.org/manga', { params: queryParams });
+    return response.data.data;
   } catch (error) {
-    // If there's an error, send an error response
-    res.status(500).json({ message: error.message });
+    throw new Error('Error fetching manga data');
   }
-});
+};
 
-
-
-// Define a route for the home page
+// Serve the HTML file
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+// Random manga endpoint with query parameters
+app.get('/api/random', async (req, res) => {
+  try {
+    const queryParams = {
+      'includes[]': ['manga', 'cover_art', 'author', 'artist', 'tag', 'creator'],
+      'contentRating[]': ['safe', 'suggestive', 'erotica', 'pornographic'],
+      includedTagsMode: 'AND',
+      limit: 100
+    };
+
+    // Fetch manga data with the specified query parameters
+    const mangaList = await fetchMangaData(queryParams);
+
+    if (!mangaList.length) {
+      throw new Error('No manga found with the given criteria');
+    }
+
+    // Select a random manga from the list
+    const randomManga = mangaList[Math.floor(Math.random() * mangaList.length)];
+
+    // Fetch cover art data
+    const coverArtRelation = randomManga.relationships.find(rel => rel.type === 'cover_art');
+    let coverArtUrl = '';
+
+    if (coverArtRelation) {
+      const coverArtId = coverArtRelation.id;
+      const coverArtResponse = await axios.get(`https://api.mangadex.org/cover/${coverArtId}`);
+      coverArtUrl = coverArtResponse.data.data.attributes.fileName;
+    }
+
+    // Include cover art URL in the response
+    const mangaDataWithCoverArt = {
+      ...randomManga,
+      coverArtUrl: coverArtUrl ? `https://uploads.mangadex.org/covers/${randomManga.id}/${coverArtUrl}` : ''
+    };
+
+    res.json(mangaDataWithCoverArt);
+  } catch (error) {
+    console.error('Error fetching random manga:', error);
+    res.status(500).json({ message: error.message });
+  }
 });
