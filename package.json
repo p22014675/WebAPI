@@ -1,15 +1,19 @@
 {
   "dependencies": {
+    "axios": "^1.7.2",
     "express": "^4.19.2",
-    "mongoose": "^8.4.0",
-    "nodemon": "^3.1.0"
+    "mongoose": "^8.4.0"
   },
   "name": "apiproject",
   "version": "1.0.0",
   "description": "assignment6003cem",
   "main": "index.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "dotenv": "^16.4.5",
+    "nodemon": "^3.1.0"
+  },
   "scripts": {
+    "devStart": "nodemon server.js",
     "start": "node index.js"
   },
   "repository": {

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manga List</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Manga List</h1>
+    <button onclick="goToHome()">Go to Home Page</button>
+    <table id="mangaTable">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Year</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Fetch the JSON data from the server
+        fetch('/api/manga')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.querySelector('#mangaTable tbody');
+                data.forEach(manga => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${manga.attributes.title.en}</td>
+
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+
+            function goToHome() {
+            window.location.href = '/login';
+        }
+            
+    </script>
+</body>
+</html>
