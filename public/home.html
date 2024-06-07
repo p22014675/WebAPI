@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manga Updates</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Manga Updates</h1>
+        <div id="welcomeMsg"></div>
+    </header>
+
+    <nav>
+        <a href="/login">Login</a> | <a href="/register">Register</a>
+    </nav>
+<div id="mainContainer">
+    <div class="input-group-search">
+        <input placeholder="Type any manga name..." type="text" id="input-field-search">
+        <button class="search-manga-button"><span>Search</span></button>
+    </div>
+    <div id="search-results" class="search-results"></div>
+    <div id="randomMangaContainer">
+        <h2>Random Manga</h2>
+        <table>
+            <tr>
+                <td rowspan="2">
+                    <img id="coverArt" src="" alt="Cover Art">
+                    <button onclick="fetchRandomManga()" class="randomBtn">
+                        <svg height="24" width="24" fill="#FFFFFF" viewBox="0 0 24 24" data-name="Layer 1" id="Layer_1" class="sparkle">
+                            <path d="M10,21.236,6.755,14.745.264,11.5,6.755,8.255,10,1.764l3.245,6.491L19.736,11.5l-6.491,3.245ZM18,21l1.5,3L21,21l3-1.5L21,18l-1.5-3L18,18l-3,1.5ZM19.333,4.667,20.5,7l1.167-2.333L24,3.5,21.667,2.333,20.5,0,19.333,2.333,17,3.5Z"></path>
+                        </svg>
+                        <span class="text">Random Manga</span>
+                    </button>
+                    <input type="checkbox" id="favoriteCheckbox" name="favorite-checkbox" value="favorite-button">
+                    <label for="favoriteCheckbox" class="favorite-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                    <div class="action">
+                        <span class="option-1">Add to Favorites</span>
+                        <span class="option-2">Added to Favorites</span>
+                    </div>
+                    </label>
+                </td>
+                <td>
+                    <p id="mangaTitle"><strong>Title:</strong></p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p id="mangaDescription"><strong>Description:</strong></p>
+                    <div id="chaptersList">
+                        <!-- Chapters links will be inserted here -->
+                    </div>
+                    
+                </td>
+            </tr>
+        </table>
+        
+    </div>
+
+    <div id="recentUpdatesContainer">
+        <h2>Recent Manga Updates</h2>
+        <table id="recentUpdatesTable">
+            <!-- Recent updates will be inserted here -->
+        </table>
+    </div>
+</div>
+    <footer>
+        <p>&copy; 2024 Manga Updates. All rights reserved.</p>
+    </footer>
+
+    <script src="/script.js"></script>
+</body>
+</html>

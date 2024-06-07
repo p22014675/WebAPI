@@ -1,0 +1,322 @@
+/* General styling */
+body {
+    width: 100%;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background-color: #313131;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.171) 2px, transparent 0);
+    background-size: 30px 30px;
+    background-position: -5px -5px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header, footer {
+    background-color: #333;
+    color: white;
+    padding: 10px 0;
+    width: 100%;
+    text-align: center;
+}
+
+header h1, footer p {
+    margin: 0;
+}
+
+nav {
+    margin: 20px 0;
+}
+
+nav a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #007bff;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+#mainContainer{
+    width: 75%;
+    height: 100%;
+    border-radius: 30px;
+    background: #212121;
+    box-shadow: 15px 15px 30px rgb(25, 25, 25),
+                -15px -15px 30px rgb(60, 60, 60);
+}
+
+
+/* Manga updates styling */
+#randomMangaContainer, #recentUpdatesContainer {
+    margin: 20px auto;
+    width: 800px;
+    text-align: left;
+    color: white;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+td {
+    vertical-align: top;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+img {
+    width: 100%;
+    max-width: 450px;
+    height: auto;
+}
+
+.truncate {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.randomBtn {
+    border: none;
+    width: 15em;
+    height: 5em;
+    border-radius: 3em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    background: #1C1A1C;
+    cursor: pointer;
+    transition: all 450ms ease-in-out;
+  }
+  
+  .sparkle {
+    fill: #AAAAAA;
+    transition: all 800ms ease;
+  }
+  
+  .text {
+    font-weight: 600;
+    color: #AAAAAA;
+    font-size: medium;
+  }
+  
+  .randomBtn:hover {
+    background: linear-gradient(0deg,#A47CF3,#683FEA);
+    box-shadow: inset 0px 1px 0px 0px rgba(255, 255, 255, 0.4),
+    inset 0px -4px 0px 0px rgba(0, 0, 0, 0.2),
+    0px 0px 0px 4px rgba(255, 255, 255, 0.2),
+    0px 0px 180px 0px #9917FF;
+    transform: translateY(-2px);
+  }
+  
+  .randomBtn:hover .text {
+    color: white;
+  }
+  
+  .randomBtn:hover .sparkle {
+    fill: white;
+    transform: scale(1.2);
+  } 
+  #favoriteCheckbox + .favorite-container {
+    background-color: white;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 15px 10px 10px;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 10px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    color: black;
+  }
+  
+  #favoriteCheckbox {
+    display: none;
+  }
+  
+  #favoriteCheckbox:checked + .favorite-container svg {
+    fill: hsl(0deg 100% 50%);
+    stroke: hsl(0deg 100% 50%);
+    animation: heartButton 1s;
+  }
+  
+  @keyframes heartButton {
+    0% {
+      transform: scale(1);
+    }
+  
+    25% {
+      transform: scale(1.3);
+    }
+  
+    50% {
+      transform: scale(1);
+    }
+  
+    75% {
+      transform: scale(1.3);
+    }
+  
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  #favoriteCheckbox + .favorite-container .action {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+  }
+  
+  #favoriteCheckbox + .favorite-container .action span {
+    grid-column-start: 1;
+    grid-column-end: 1;
+    grid-row-start: 1;
+    grid-row-end: 1;
+    transition: all .5s;
+  }
+  
+  #favoriteCheckbox + .favorite-container .action span.option-1 {
+    transform: translate(0px,0%);
+    opacity: 1;
+  }
+  
+  #favoriteCheckbox:checked + .favorite-container .action span.option-1 {
+    transform: translate(0px,-100%);
+    opacity: 0;
+  }
+  
+  #favoriteCheckbox + .favorite-container .action span.option-2 {
+    transform: translate(0px,100%);
+    opacity: 0;
+  }
+  
+  #favoriteCheckbox:checked + .favorite-container .action span.option-2 {
+    transform: translate(0px,0%);
+    opacity: 1;
+  }
+  .input-group-search {
+    display: flex;
+    flex-direction: row;
+    margin: 0 auto;
+    justify-content: center;
+    width:70%;
+    padding:5%;
+  }
+  
+  .search-manga-button {
+    font-size: 17px;
+    padding: 0.5em 2em;
+    border: transparent;
+    box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24);
+    background: #2E2E2E;
+    border-radius: 0 10px 10px 0;
+    transition: 0.3s;
+  }
+  
+  .search-manga-button:hover {
+    transition: 0.3s;
+    background: linear-gradient(90deg, #FC466B 0%, #3F5EFB 100%);
+    cursor: pointer;
+  }
+  
+  .search-manga-button:active {
+    transform: translate(0em, 0.2em);
+  }
+  
+  .search-manga-button span {
+    font-weight: 800;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #FC466B 0%, #3F5EFB 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: 0.3s;
+  }
+  
+  .search-manga-button:hover span {
+    background: #2E2E2E;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: 0.3s;
+  }
+  
+  #input-field-search {
+    background-color: #2E2E2E;
+    border-radius: 10px 0 0 10px;
+    border: none;
+    width: 900px;
+    padding-left: 8px;
+    color: white;
+    font-size: 14px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+  
+  ::placeholder {
+    color: rgb(184, 184, 184);
+  }
+  .searchResultCell {
+    position: relative;
+    background-color:#29292c;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    width: 180px; /* Adjusted to accommodate padding and image */
+    text-align: center;
+}
+.resultGlow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+.searchResultCell:hover .resultGlow {
+    opacity: 1;
+}
+.resultBorderGlow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+.searchResultCell:hover .resultBorderGlow {
+    opacity: 1;
+}
+.resultTitle {
+    font-size: 1em;
+    font-weight: bold;
+    margin: 10px 0;
+}
+.resultCoverArt img {
+    width: 150px;
+    height: 200px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+.resultChapter {
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+#search-results {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    color:white;
+    
+}

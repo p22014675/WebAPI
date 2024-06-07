@@ -1,19 +1,23 @@
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
+const { MongoClient } = require('mongodb');
 
-dotenv.config();
+
+const url = 'mongodb+srv://p22014675:GcIq34ROYbneiGGD@clusters.3xpeqwi.mongodb.net/'; 
+const dbName = 'mangaApp';
+
+let db;
 
 const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('MongoDB connected');
-  } catch (err) {
-    console.error('MongoDB connection failed:', err.message);
-    process.exit(1);
-  }
+    if (db) return db;
+
+    const client = new MongoClient(url, { useUnifiedTopology: true });
+    await client.connect();
+    db = client.db(dbName);
+    return db;
 };
 
-module.exports = connectDB;
+module.exports = { connectDB };
+
+
+
+
+

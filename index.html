@@ -3,72 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Manga</title>
+    <title>Manga Updates</title>
     <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        #randomMangaContainer, #recentUpdatesContainer {
+            margin: 20px auto;
+            width: 800px;
+            text-align: left;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            table-layout: fixed;
         }
-        td, th {
+        td {
+            vertical-align: top;
+            padding: 10px;
             border: 1px solid #ddd;
-            padding: 8px;
         }
-        th {
-            padding-top: 12px;
-            padding-bottom: 12px;
-            text-align: left;
-            background-color: #f2f2f2;
+        img {
+            width: 100%;
+            max-width: 450px;
+            height: auto;
         }
-        #coverArt {
-            width: 450px;
-            height: 800px;
-            object-fit: cover; /* Ensures the image covers the entire area without distortion */
+        .truncate {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>Manga Updates</h1>
+    </header>
+
     <div id="randomMangaContainer">
         <h2>Random Manga</h2>
-        <button onclick="fetchRandomManga()">Get Random Manga</button>
         <table>
             <tr>
-                <td rowspan="2"><img id="coverArt" src="" alt="Cover Art"></td> <!-- Image tag for cover art -->
-                <td id="mangaTitle"><strong>Title:</strong> </td>
+                <td rowspan="2">
+                    <img id="coverArt" src="" alt="Cover Art">
+                </td>
+                <td>
+                    <p id="mangaTitle"><strong>Title:</strong></p>
+                </td>
             </tr>
             <tr>
-                <td id="mangaDescription"><strong>Description:</strong> </td>
+                <td>
+                    <p id="mangaDescription"><strong>Description:</strong></p>
+                    <div id="chaptersList">
+                        <!-- Chapters links will be inserted here -->
+                    </div>
+                </td>
             </tr>
+        </table>
+        <button onclick="fetchRandomManga()">Get Random Manga</button>
+    </div>
+
+    <div id="recentUpdatesContainer">
+        <h2>Recent Manga Updates</h2>
+        <table id="recentUpdatesTable">
+            <!-- Recent updates will be inserted here -->
         </table>
     </div>
 
+    <footer>
+        <p>&copy; 2024 Manga Updates. All rights reserved.</p>
+    </footer>
+
     <script>
-        function fetchRandomManga() {
-            // Construct URL with query parameters
-            const url = '/api/random?includes[]=manga&includes[]=cover_art&includes[]=author&includes[]=artist&includes[]=tag&includes[]=creator&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&includedTagsMode=AND';
+        async function fetchRandomManga() {
+            try {
+                const response = await fetch('/api/random');
+                const data = await response.json();
 
-            fetch(url)
-                .then(response => response.json()) // Convert response to JSON
-                .then(data => {
-                    // Extract manga details
-                    const mangaTitle = data.attributes.title.en;
-                    const mangaDescription = data.attributes.description.en || 'No description available';
-                    const coverArtUrl = data.coverArtUrl;
+                const mangaTitle = data.attributes.title.en || 'No title available';
+                const mangaDescription = data.attributes.description.en || 'No description available';
+                const coverArtUrl = data.coverArtUrl;
+                const chapters = data.chapters || [];
 
-                    // Update cover art image source if available
-                    if (coverArtUrl) {
-                        document.getElementById('coverArt').src = coverArtUrl;
-                    } else {
-                        document.getElementById('coverArt').src = '';
-                        console.error('Cover art URL not found in response');
-                    }
+                document.getElementById('coverArt').src = coverArtUrl || '';
+                document.getElementById('mangaTitle').innerText = `Title: ${mangaTitle}`;
+                document.getElementById('mangaDescription').innerText = `Description: ${mangaDescription}`;
 
-                    // Update manga title and description
-                    document.getElementById('mangaTitle').innerHTML = `<strong>Title:</strong> ${mangaTitle}`;
-                    document.getElementById('mangaDescription').innerHTML = `<strong>Description:</strong> ${mangaDescription}`;
-                })
-                .catch(error => console.error('Error fetching random manga:', error));
+                const chaptersList = document.getElementById('chaptersList');
+                chaptersList.innerHTML = '';
+                if (chapters.length > 0) {
+                    chapters.forEach(chapter => {
+                        const chapterLink = document.createElement('a');
+                        chapterLink.href = `https://mangadex.org/chapter/${chapter.id}`;
+                        chapterLink.target = '_blank';
+                        chapterLink.innerText = `Chapter ${chapter.attributes.chapter || 'N/A'}`;
+                        chaptersList.appendChild(chapterLink);
+                        chaptersList.appendChild(document.createElement('br'));
+                    });
+                } else {
+                    chaptersList.innerText = 'No chapters available';
+                }
+            } catch (error) {
+                console.error('Error fetching random manga:', error);
+            }
         }
+        async function fetchRecentMangaUpdates() {
+    try {
+        const response = await fetch('/api/recent-updates');
+        const data = await response.json();
+        const recentUpdatesTable = document.getElementById('recentUpdatesTable');
+
+        if (Array.isArray(data)) {
+            data.forEach(async manga => {
+                const coverArtRelation = manga.relationships.find(rel => rel.type === 'cover_art');
+                const coverArtUrl = coverArtRelation ? `https://uploads.mangadex.org/covers/${manga.id}/${coverArtRelation.attributes.fileName}` : '';
+                const mangaTitle = manga.attributes.title.en || 'No title available';
+                const latestChapterId = manga.attributes.latestUploadedChapter || 'N/A';
+
+                // Fetch chapter details to get chapter number
+                if (latestChapterId !== 'N/A') {
+                    const chapterResponse = await fetch(`https://api.mangadex.org/chapter/${latestChapterId}`);
+                    const chapterData = await chapterResponse.json();
+                    const chapterNumber = chapterData.data.attributes.chapter || 'N/A';
+                    const chapterLink = `<a href="https://mangadex.org/chapter/${latestChapterId}" target="_blank">Chapter ${chapterNumber}</a>`;
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><img src="${coverArtUrl}" alt="Cover Art" style="max-width: 100px; height: auto;"></td>
+                        <td>${mangaTitle}</td>
+                        <td>${chapterLink}</td>
+                    `;
+                    recentUpdatesTable.appendChild(row);
+                } else {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><img src="${coverArtUrl}" alt="Cover Art" style="max-width: 100px; height: auto;"></td>
+                        <td>${mangaTitle}</td>
+                        <td>N/A</td>
+                    `;
+                    recentUpdatesTable.appendChild(row);
+                }
+            });
+        } else {
+            console.error('Invalid data format for recent manga updates:', data);
+        }
+    } catch (error) {
+        console.error('Error fetching recent manga updates:', error);
+    }
+}
+
+        // Fetch recent manga updates on page load
+        fetchRecentMangaUpdates();
     </script>
 </body>
 </html>
