@@ -42,45 +42,91 @@ nav a:hover {
 #mainContainer{
     width: 75%;
     height: 100%;
+    padding-top: 30px;
     border-radius: 30px;
     background: #212121;
     box-shadow: 15px 15px 30px rgb(25, 25, 25),
                 -15px -15px 30px rgb(60, 60, 60);
-}
+
+    }
+  .row {
+      display: flex;
+  }
+  
+  .manga-container,
+  .last-visited-container {
+      width: 50%;
+  }
+  
+  .last-visited-container {
+      padding-left: 20px; /* Add some space between the two sections */
+      margin: 20px 10% 20px 20px;
+      width: 800px;
+      color: white;
+      text-align: left;
+      background-color:#29292c;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  }
 
 
 /* Manga updates styling */
-#randomMangaContainer, #recentUpdatesContainer {
-    margin: 20px auto;
-    width: 800px;
-    text-align: left;
-    color: white;
+#randomMangaContainer {
+  margin: 20px 0 20px 10%;
+  width: 800px;
+  color: white;
+  text-align: left;
+  background-color:#29292c;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+/* Manga updates styling */
+#recentUpdatesContainer {
+  margin: 20px auto;
+  width: 800px;
+  color: white;
+  text-align: left;
+  background-color:#29292c;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 10px; /* Add space between cells */
 }
 
 td {
-    vertical-align: top;
-    padding: 10px;
-    border: 1px solid #ddd;
+  vertical-align: top;
+  padding: 10px;
 }
 
 img {
-    width: 100%;
-    max-width: 450px;
-    height: auto;
+  width: 100%;
+  max-width: 600px;
+  height: 25%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 10px;
 }
 
 .truncate {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  color: white;
+}
+
+.resultTitle, .resultChapter {
+  margin-bottom: 5px;
 }
 .randomBtn {
     border: none;
@@ -208,7 +254,9 @@ img {
     margin: 0 auto;
     justify-content: center;
     width:70%;
+    height: 60px;
     padding:5%;
+
   }
   
   .search-manga-button {
@@ -252,9 +300,9 @@ img {
     border-radius: 10px 0 0 10px;
     border: none;
     width: 900px;
-    padding-left: 8px;
+    padding-left: 40px;
     color: white;
-    font-size: 14px;
+    font-size: 25px;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
   
@@ -320,3 +368,308 @@ img {
     color:white;
     
 }
+.manga-menu {
+  display: block;
+  width: 100%;
+  background: #29292c;
+  line-height: 1.6em;
+  font-weight: 400;
+  text-align: center;
+  position: relative;
+  margin: 0 auto;
+}
+
+/* Strip the ul of padding and list styling */
+.manga-menu ul {
+  
+  list-style-type: none;
+  margin: 0 auto;
+  padding-left: 0;
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  background: #29292c;
+}
+
+/* Create a horizontal list with spacing */
+.manga-menu li {
+  display: inline-block;
+}
+
+/* Style for menu links */
+.manga-menu li a {
+  display: block;
+  min-width: 140px;
+  text-align: center;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: white;
+  text-transform: normal;
+  background: #29292c;
+  text-decoration: none;
+  margin-left: -5px;
+  padding: 10px 0;
+  transition: all 0.4s ease 0s;
+}
+
+/* Hover state for top level links */
+.manga-menu li:hover a {
+  color: rgba(0, 0, 0, 0.5);
+  background-color: lightgray;
+}
+
+/* Style for dropdown links */
+.manga-menu li:hover ul a {
+  background: #29292c;
+  color: white;
+  height: 40px;
+  line-height: 40px;
+}
+
+/* Hover state for dropdown links */
+.manga-menu li:hover .manga-menu ul a:hover {
+  color: lightgray;
+}
+
+/* Hide dropdown links until they are needed */
+.manga-menu li ul {
+  display: none;
+}
+
+/* Make dropdown links vertical */
+.manga-menu li ul li {
+  display: block;
+  float: none;
+}
+
+/* Prevent text wrapping */
+.manga-menu li ul li a {
+  width: auto;
+  min-width: 100px;
+  padding: 0 20px;
+}
+
+/* Style 'show menu' label button and hide it by default */
+.manga-menu .show-manga-menu {
+  text-decoration: none;
+  color: white;
+  background: #29292c;
+  text-align: center;
+  padding: 10px 15px;
+  display: none;
+  cursor: pointer;
+  text-transform: normal;
+}
+
+.manga-menu .show-manga-menu span {
+  padding-left: 2em;
+  text-align: right;
+}
+
+/* Hide checkbox */
+.manga-menu input[type="checkbox"] {
+  display: none;
+}
+
+/* Show menu when invisible checkbox is checked */
+.manga-menu input[type="checkbox"]:checked ~ #manga-menu {
+  display: block;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 767px) {
+  .manga-menu .manga-lines {
+    border-bottom: 15px double black;
+    border-top: 5px solid black;
+    content: "";
+    height: 5px;
+    width: 20px;
+    padding-right: 15px;
+    float: right;
+  }
+  /* Make dropdown links appear inline */
+  .manga-menu ul {
+    position: static;
+    display: none;
+  }
+  /* Create vertical spacing */
+  .manga-menu li {
+    margin-bottom: 0;
+  }
+  /* Make all menu links full width */
+  .manga-menu ul li,
+  .manga-menu li a {
+    width: 100%;
+  }
+  /* Display 'show menu' link */
+  .manga-menu .show-manga-menu {
+    display: block;
+  }
+}
+#recentUpdatesContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  width: 80%;
+}
+
+.manga-card {
+  background-color: #29292c;
+  padding: 20px;
+  margin: 15px;
+  border-radius: 10px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  width: calc(20% - 20px); /* Adjusted width for larger cards, accounting for padding and margin */
+  text-align: center;
+  color: white;
+  box-sizing: border-box;
+}
+
+.manga-card img {
+  width: 100%;
+  height: 300px; /* Increased height for larger images */
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.card-content .truncate {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  color: white;
+}
+
+.card-content .resultTitle {
+  margin-bottom: 10px; /* Increased margin for better spacing */
+}
+
+.card-content .resultChapter {
+  margin-bottom: 10px; /* Increased margin for better spacing */
+  color: white;
+}
+/* <main-style> ============================ */
+.chapter__button {
+  min-width: 100px;
+  height: 36px;
+  max-width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  border: 1px solid #fff;
+  background-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.chapter__button::before {
+  content: 'Read Now!';
+  color: #000;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all .4s;
+  z-index: 1;
+}
+
+.chapter__button:hover::before {
+  top: 0;
+}
+
+.chapter__button span {
+  color: #fff;
+  line-height: 1;
+  transition: color .4s;
+  position: relative;
+  z-index: 2;
+}
+
+.chapter__button:hover span {
+  color: transparent;
+}
+
+.randomMangaChapter__button {
+  min-width: 100px;
+  height: 36px;
+  max-width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  border: 1px solid #fff;
+  background-color: transparent;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.randomMangaChapter__button::before {
+  content: 'Read Now!';
+  color: #000;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all .4s;
+  z-index: 1;
+}
+
+.randomMangaChapter__button:hover::before {
+  top: 0;
+}
+
+.randomMangaChapter__button span {
+  color: #fff;
+  line-height: 1;
+  transition: color .4s;
+  position: relative;
+  z-index: 2;
+}
+
+.randomMangaChapter__button:hover span {
+  color: transparent;
+}
+.chapter-row-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 10px; /* Adjust as needed */
+}
+
+.last-visited-cell {
+  background-color: #29292c;
+  border-radius: 10px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  width: 30%; /* Adjusted width for larger cards, accounting for padding and margin */
+  text-align: center;
+  color: white;
+  box-sizing: border-box;
+}
+
+.last-visited-cell img {
+  max-width: 100%;
+  height: 300px;
+  border-radius: 5px;
+}
+
+.last-visited-cell .truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: 20px;
+}
+

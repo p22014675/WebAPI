@@ -5,6 +5,7 @@ const session = require('express-session');
 const path = require('path');
 const axios = require('axios');
 const { connectDB } = require('./db');
+const HistoryList = require('./historyListSchema');
 
 const app = express();
 const port = 3000;
@@ -141,6 +142,50 @@ app.post('/api/readList', isAuthenticated, async (req, res) => {
     }
 });
 
+// Endpoint to save history entry
+app.post('/api/history/save', isAuthenticated, async (req, res) => {
+    const { mangaId, chapter } = req.body;
+    const userId = req.session.user.id;
+
+    try {
+        // Establish connection to the database
+        const db = await connectDB();
+
+        // Access the historyList collection
+        const historyListCollection = db.collection('historyList');
+
+        // Create a new history entry document
+        const historyEntry = {
+            mangaId,
+            chapter,
+            userId,
+            createdAt: new Date()
+        };
+
+        // Save the history entry to the historyList collection
+        await historyListCollection.insertOne(historyEntry);
+
+        // Respond with success message
+        res.status(200).send('History entry saved successfully');
+    } catch (error) {
+        console.error('Error saving history entry:', error);
+        res.status(500).send('Failed to save history entry');
+    }
+});
+app.get('/api/history/:userId', isAuthenticated, async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const db = await connectDB();
+        const historyListCollection = db.collection('historyList');
+
+        const history = await historyListCollection.find({ userId }).toArray();
+        res.json(history);
+    } catch (error) {
+        console.error('Error retrieving history:', error);
+        res.status(500).json({ error: 'Failed to retrieve history' });
+    }
+});
 // Random manga endpoint with query parameters
 app.get('/api/random', isAuthenticated, async (req, res) => {
     try {

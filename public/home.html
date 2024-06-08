@@ -11,17 +11,26 @@
         <h1>Manga Updates</h1>
         <div id="welcomeMsg"></div>
     </header>
-
-    <nav>
-        <a href="/login">Login</a> | <a href="/register">Register</a>
-    </nav>
+    <nav class="manga-menu">
+        <label for="show-manga-menu" class="show-manga-menu"><span></span><div class="manga-lines"></div></label>
+        <input type="checkbox" id="show-manga-menu">
+        <ul id="manga-menu">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">My List</a></li>
+          <li><a href="#">All Manga</a></li>
+          <li><a href="#">Account</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <a href="/login">Login</a> | <a href="/register">Register</a>
+        </ul>
+      </nav>
 <div id="mainContainer">
     <div class="input-group-search">
         <input placeholder="Type any manga name..." type="text" id="input-field-search">
         <button class="search-manga-button"><span>Search</span></button>
     </div>
     <div id="search-results" class="search-results"></div>
-    <div id="randomMangaContainer">
+    <div class="row">
+    <div id="randomMangaContainer" class="manga-container">
         <h2>Random Manga</h2>
         <table>
             <tr>
@@ -58,9 +67,13 @@
                 </td>
             </tr>
         </table>
-        
+       
+    </div> 
+    <div id="lastVisitedContainer" class="last-visited-container" data-userid="66607e8686640f1b4a9f78af">
+        <h2>Last Visited Manga</h2>
     </div>
-
+    </div>
+    
     <div id="recentUpdatesContainer">
         <h2>Recent Manga Updates</h2>
         <table id="recentUpdatesTable">
