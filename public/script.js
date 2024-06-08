@@ -68,6 +68,7 @@ async function fetchRandomManga() {
                     rowContainer.appendChild(chapterButton);
                 });
                 chaptersList.appendChild(rowContainer);
+                chaptersList.appendChild(document.createElement('br'));
             }
         } else {
             chaptersList.innerText = 'No chapters available';
@@ -94,7 +95,6 @@ function createChapterButton(chapter, mangaId) {
 }
 function createEllipsisButton() {
     const ellipsisButton = document.createElement('span');
-
     ellipsisButton.innerText = 'Latest Chapter : ';
     ellipsisButton.disabled = true;
     return ellipsisButton;
