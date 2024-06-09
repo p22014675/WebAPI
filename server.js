@@ -43,6 +43,7 @@ function isAuthenticated(req, res, next) {
 // Serve the HTML files
 app.get('/', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/home.html'));
+    
 });
 
 app.get('/login', (req, res) => {

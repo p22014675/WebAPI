@@ -332,10 +332,10 @@ async function fetchMangaDetails(mangaId) {
 
 async function loadLastVisitedManga() {
     try {
-        const userId = document.getElementById('lastVisitedContainer').dataset.userid;
+        const userId = document.getElementById('lastVisitedContent').dataset.userid;
         const response = await fetch(`/api/history/${userId}`);
         const data = await response.json();
-        const lastVisitedContainer = document.getElementById('lastVisitedContainer');
+        const lastVisitedContainer = document.getElementById('lastVisitedContent');
 
         if (Array.isArray(data)) {
             for (const manga of data) {
@@ -370,6 +370,23 @@ async function loadLastVisitedManga() {
         console.error('Error loading last visited manga:', error);
     }
 }
-
+document.getElementById('logoutButton').addEventListener('click', function(e) {
+    e.preventDefault();
+    fetch('/logout', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => {
+        if (response.ok) {
+            window.location.href = '/login';
+        } else {
+            alert('Failed to log out');
+        }
+    }).catch(error => {
+        console.error('Error:', error);
+    });
+});
 
 

@@ -69,9 +69,10 @@ nav a:hover {
       padding: 10px;
       border-radius: 10px;
       box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-      display: flex;
+      max-height: 900px;
       flex-wrap: nowrap; /* Prevent wrapping of flex items */
       overflow-y: auto;
+      display: block;
   }
 
 
@@ -86,7 +87,8 @@ nav a:hover {
   border-radius: 10px;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   overflow: auto;
- 
+  max-height: 900px;
+  scrollbar-width: none;
 }
 /* Manga updates styling */
 #recentUpdatesContainer {
@@ -666,8 +668,9 @@ img {
   text-align: center;
   color: white;
   box-sizing: border-box;
-  margin-right: 10px; /* Space between cells */
+  margin: 5px; /* Space between cells */
   flex: 0 0 auto;
+  align-items: center;
 }
 
 .last-visited-cell img {
@@ -681,6 +684,23 @@ img {
   overflow: hidden;
   text-overflow: ellipsis;
   margin-left: 20px;
+}
+
+#lastVisitedContent::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #636363;
+}
+
+#lastVisitedContent::-webkit-scrollbar {
+  width: 12px;
+	background-color: #636363;
+}
+
+#lastVisitedContent::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #b6b4b4;
 }
 #mangaDescription {
   max-width: 100%;
@@ -735,4 +755,15 @@ scrollbar-width: none;
       rgb(28,58,148) 86%
   );
 }
-
+.last-visited-container h2 {
+  margin-bottom: 15px; /* Adds space between the heading and the content below */
+  font-size: 24px; /* Adjusts the font size of the heading */
+  color: white; /* Sets the text color */
+  display:block;
+}
+#lastVisitedContent{
+  display:flex;
+  flex-wrap: wrap;
+  overflow:auto;
+  max-height:90%;
+}
