@@ -30,6 +30,32 @@ const fetchMangaData = async (queryParams) => {
         throw new Error('Error fetching manga data');
     }
 };
+async function getMangaDetails(mangaId) {
+    try {
+        const manga = await fetchMangaData({ ids: [mangaId] });
+        if (!manga || manga.length === 0) {
+            throw new Error('Manga not found');
+        }
+
+        const mangaDetails = manga[0];
+
+        const title = mangaDetails.attributes.title.en;
+        const coverArtId = mangaDetails.relationships.find(rel => rel.type === 'cover_art').id;
+        const coverArtResponse = await axios.get(`https://api.mangadex.org/cover/${coverArtId}`);
+        const coverArtData = coverArtResponse.data.data;
+        const coverArtUrl = `https://uploads.mangadex.org/covers/${mangaId}/${coverArtData.attributes.fileName}`;
+
+        return {
+            mangaId,
+            title,
+            coverArtUrl,
+            latestChapter: mangaDetails.attributes.lastChapter
+        };
+    } catch (error) {
+        console.error('Error fetching manga details:', error);
+        return null;
+    }
+}
 
 // Middleware to check if user is authenticated
 function isAuthenticated(req, res, next) {
@@ -59,6 +85,9 @@ app.get('/api/checkAuth', (req, res) => {
     } else {
         res.status(401).json({ error: 'Not authenticated' });
     }
+});
+app.get('/favorite', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/favorite.html'));
 });
 
 // Handle user registration
@@ -103,12 +132,17 @@ app.post('/login', async (req, res) => {
         }
 
         req.session.user = { id: user._id, username: user.username };
+        
+        // Set a cookie with the user ID
+        res.cookie('userId', user._id, { httpOnly: true });
         res.redirect('/');
+
     } catch (error) {
         console.error('Error during login:', error);
         res.status(500).send('Internal server error');
     }
 });
+
 
 // Handle user logout
 app.post('/logout', (req, res) => {
@@ -290,6 +324,61 @@ app.get('/api/search', isAuthenticated, async (req, res) => {
     } catch (error) {
         console.error('Error searching manga:', error.response ? error.response.data : error.message);
         res.status(500).json({ error: 'Failed to search manga' });
+    }
+});
+const fetchMangaDetailsWithCoverArt = async (mangaId) => {
+    try {
+        // Fetch manga details from MangaDex API
+        const mangaResponse = await axios.get(`https://api.mangadex.org/manga/${mangaId}`);
+        const mangaData = mangaResponse.data.data;
+        
+        // Extract relevant details such as title and latest chapter
+        const title = mangaData.attributes.title["en"]; // Assuming you want the English title
+        const latestChapter = mangaData.relationships.find(rel => rel.type === "chapter")?.id; // Get the ID of the latest chapter
+
+        // Fetch cover art details from MangaDex API
+        const coverArtRelation = mangaData.relationships.find(rel => rel.type === 'cover_art');
+        let coverArtUrl = '';
+
+        if (coverArtRelation) {
+            const coverArtId = coverArtRelation.id;
+            const coverArtResponse = await axios.get(`https://api.mangadex.org/cover/${coverArtId}`);
+            const fileName = coverArtResponse.data.data.attributes.fileName;
+            // Construct the cover art URL
+            coverArtUrl = `https://uploads.mangadex.org/covers/${mangaId}/${fileName}`;
+        }
+
+        return { title, latestChapter, coverArtUrl };
+    } catch (error) {
+        console.error('Error fetching manga details with cover art:', error);
+        return null;
+    }
+};
+app.get('/api/favorite/:userId', async (req, res) => {
+    const userId = req.params.userId;
+    try {
+        const db = await connectDB(); // Connect to MongoDB
+        const readListCollection = db.collection('readList'); // Assuming readList is the collection name
+
+        // Fetch user's favorite manga from readList collection
+        const favorites = await readListCollection.find({ userId }).toArray();
+
+        // Fetch manga details for each favorite manga including cover art
+        const mangaDetailsPromises = favorites.map(async (favorite) => {
+            const mangaId = favorite.mangaId;
+            // Fetch manga details with cover art using the manga ID
+            const mangaDetails = await fetchMangaDetailsWithCoverArt(mangaId);
+            // Merge favorite and mangaDetails objects
+            return { ...favorite, ...mangaDetails, status: favorite.status };
+        });
+
+        // Wait for all mangaDetailsPromises to resolve
+        const mangaDetails = await Promise.all(mangaDetailsPromises);
+
+        res.json(mangaDetails);
+    } catch (error) {
+        console.error('Error fetching favorites:', error);
+        res.status(500).send('Internal server error');
     }
 });
 app.listen(port, () => {

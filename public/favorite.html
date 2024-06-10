@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Favorite Manga</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav class="manga-menu">
+        <label for="show-manga-menu" class="show-manga-menu"><span></span><div class="manga-lines"></div></label>
+        <input type="checkbox" id="show-manga-menu">
+        <ul id="manga-menu">
+          <li><a href="/">Home</a></li>
+          <li><a href="/favorite">My List</a></li>
+          <li><a href="#">All Manga</a></li>
+          <li><a href="#">Account</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#" id="logoutButton">Logout</a></li>
+          
+        </ul>
+    </nav>
+
+    <div class="favorites-container">
+        <h1>My Favorite Manga</h1>
+        <div id="favorites-list" class="favorites-list"></div>
+    </div>
+
+    <script src="/favorite.js"></script>
+</body>
+</html>

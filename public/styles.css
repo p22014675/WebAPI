@@ -767,3 +767,7 @@ scrollbar-width: none;
   overflow:auto;
   max-height:90%;
 }
+.favorites-container{
+  display:flex;
+  flex-wrap: wrap;
+}
