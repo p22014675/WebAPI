@@ -255,7 +255,93 @@ img {
   #favoriteCheckbox:checked + .favorite-container .action span.option-2 {
     transform: translate(0px,0%);
     opacity: 1;
+
   }
+  /* Additional styling for chapter and favorite buttons */
+  .chapter-favorite-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+  input.favoriteCheckbox + .favorite-container {
+    background-color: white;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 15px 10px 10px;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 10px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    color: black;
+}
+
+input.favoriteCheckbox {
+    display: none;
+}
+
+input.favoriteCheckbox:checked + .favorite-container svg {
+    fill: hsl(0deg 100% 50%);
+    stroke: hsl(0deg 100% 50%);
+    animation: heartButton 1s;
+}
+
+@keyframes heartButton {
+    0% {
+        transform: scale(1);
+    }
+
+    25% {
+        transform: scale(1.3);
+    }
+
+    50% {
+        transform: scale(1);
+    }
+
+    75% {
+        transform: scale(1.3);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+input.favoriteCheckbox + .favorite-container .action {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+}
+
+input.favoriteCheckbox + .favorite-container .action span {
+    grid-column-start: 1;
+    grid-column-end: 1;
+    grid-row-start: 1;
+    grid-row-end: 1;
+    transition: all .5s;
+}
+
+input.favoriteCheckbox + .favorite-container .action span.option-1 {
+    transform: translate(0px,0%);
+    opacity: 1;
+}
+
+input.favoriteCheckbox:checked + .favorite-container .action span.option-1 {
+    transform: translate(0px,-100%);
+    opacity: 0;
+}
+
+input.favoriteCheckbox + .favorite-container .action span.option-2 {
+    transform: translate(0px,100%);
+    opacity: 0;
+}
+
+input.favoriteCheckbox:checked + .favorite-container .action span.option-2 {
+    transform: translate(0px,0%);
+    opacity: 1;
+}
   .input-group-search {
     display: flex;
     flex-direction: row;
@@ -600,6 +686,7 @@ img {
   transition: color .4s;
   position: relative;
   z-index: 2;
+  white-space: nowrap;
 }
 
 .chapter__button:hover span {
@@ -670,7 +757,7 @@ img {
   box-sizing: border-box;
   margin: 5px; /* Space between cells */
   flex: 0 0 auto;
-  align-items: center;
+  overflow: hidden;
 }
 
 .last-visited-cell img {
@@ -679,11 +766,28 @@ img {
   border-radius: 5px;
 }
 
-.last-visited-cell .truncate {
+.last-truncate {
+  display: block;
+
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-left: 20px;
+  transition: transform 0s linear;
+ 
+}
+
+.last-visited-cell:hover .last-truncate {
+  animation: moveLeft 10s linear infinite;
+}
+
+@keyframes moveLeft {
+  0% {
+      transform: translateX(0%);
+  }
+  100% {
+      transform: translateX(-100%);
+  }
+}
+.last-visited-cell .chapter__button{
+  margin:auto;
 }
 
 #lastVisitedContent::-webkit-scrollbar-track {
@@ -768,6 +872,141 @@ scrollbar-width: none;
   max-height:90%;
 }
 .favorites-container{
+    width: 80%;
+    height: 100%;
+    padding-top: 30px;
+    border-radius: 30px;
+    background: #212121;
+    box-shadow: 15px 15px 30px rgb(25, 25, 25),
+                -15px -15px 30px rgb(60, 60, 60);
+}
+.favorites-list{
+  justify-content: center;
   display:flex;
   flex-wrap: wrap;
+  overflow:auto;
+  max-height:90%;
+  margin: 20px auto;
+  width: 75%;
+  color: white;
+  text-align: left;
+  background-color:#29292c;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
+#favoriteH1{
+color:white;
+text-align: center;
+}
+.favorite-manga-card {
+  background-color: #29292c;
+  padding: 20px;
+  margin: 5px;
+  border-radius: 10px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  width: 20%;/* Adjusted width for larger cards, accounting for padding and margin */
+  max-height: 5%;
+  text-align: center;
+  color: white;
+  box-sizing: border-box;
+}
+
+.favorite-manga-card img {
+  width: 100%;
+  height: 300px; /* Increased height for larger images */
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+.favorite-card-content{
+  justify-content: center;
+}
+.favorite-card-content .truncate {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  color: white;
+}
+
+.favorite-card-content .resultTitle {
+  margin-bottom: 10px; /* Increased margin for better spacing */
+}
+
+.favorite-card-content .resultChapter {
+  margin-bottom: 10px; /* Increased margin for better spacing */
+  color: white;
+}
+.no-history-message{
+font-weight: bold;
+font-size:35px;
+
+}
+.readStatus {
+  outline: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 140px;
+  height: 50px;
+  border-radius: 0.5em;
+  box-shadow: 0 0.625em 1em 0 rgba(30, 143, 255, 0.35);
+  overflow: hidden;
+  cursor: pointer;
+  padding:0;
+margin-top: 10px;
+margin-left:auto;
+margin-right: auto;
+margin-bottom: 10px;
+
+}
+
+.readStatus div {
+  transform: translateY(-10px);
+  width: 100%;
+}
+
+.readStatus,
+.readStatus div {
+  transition: 0.6s cubic-bezier(.16, 1, .3, 1);
+}
+
+.readStatus div span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  padding: 0.75em 1.125em;
+}
+
+.readStatus div:nth-child(1) {
+  background-color: #1e90ff;
+}
+
+.readStatus div:nth-child(2) {
+  background-color: #21dc62;
+}
+
+.readStatus:hover {
+  box-shadow: 0 0.625em 1em 0 rgba(33, 220, 98, 0.35);
+}
+
+.readStatus:hover div,
+.readStatus.active div {
+  transform: translateY(-76px);
+}
+
+.readStatus p {
+  font-size: 17px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.readStatus:active {
+  transform: scale(0.95);
+}
+

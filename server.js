@@ -30,32 +30,6 @@ const fetchMangaData = async (queryParams) => {
         throw new Error('Error fetching manga data');
     }
 };
-async function getMangaDetails(mangaId) {
-    try {
-        const manga = await fetchMangaData({ ids: [mangaId] });
-        if (!manga || manga.length === 0) {
-            throw new Error('Manga not found');
-        }
-
-        const mangaDetails = manga[0];
-
-        const title = mangaDetails.attributes.title.en;
-        const coverArtId = mangaDetails.relationships.find(rel => rel.type === 'cover_art').id;
-        const coverArtResponse = await axios.get(`https://api.mangadex.org/cover/${coverArtId}`);
-        const coverArtData = coverArtResponse.data.data;
-        const coverArtUrl = `https://uploads.mangadex.org/covers/${mangaId}/${coverArtData.attributes.fileName}`;
-
-        return {
-            mangaId,
-            title,
-            coverArtUrl,
-            latestChapter: mangaDetails.attributes.lastChapter
-        };
-    } catch (error) {
-        console.error('Error fetching manga details:', error);
-        return null;
-    }
-}
 
 // Middleware to check if user is authenticated
 function isAuthenticated(req, res, next) {
@@ -92,57 +66,57 @@ app.get('/favorite', (req, res) => {
 
 // Handle user registration
 app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
+    const { username, email, password } = req.body;
 
     try {
-        const db = await connectDB();app.get('/api/checkAuth', (req, res) => {
-    if (req.session.user) {
-        res.status(200).json({ username: req.session.user });
-    } else {
-        res.status(401).json({ error: 'Not authenticated' });
-    }
-});
+        const db = await connectDB();
         const userCollection = db.collection('users');
 
-        const existingUser = await userCollection.findOne({ username });
+        // Check if the username or email already exists
+        const existingUser = await userCollection.findOne({ $or: [{ username }, { email }] });
         if (existingUser) {
-            return res.status(400).send('User already exists');
+            if (existingUser.username === username) {
+                return res.status(400).send('Username already exists');
+            } else if (existingUser.email === email) {
+                return res.status(400).send('Email already exists');
+            }
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        await userCollection.insertOne({ username, password: hashedPassword });
+        await userCollection.insertOne({ username, email, password: hashedPassword });
         res.redirect('/login');
     } catch (error) {
         console.error('Error during registration:', error);
         res.status(500).send('Internal server error');
     }
 });
-
-// Handle user login
+//Login
 app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
+    const { identifier, password } = req.body; // identifier can be either username or email
 
     try {
         const db = await connectDB();
         const userCollection = db.collection('users');
 
-        const user = await userCollection.findOne({ username });
+        // Find user by username or email
+        const user = await userCollection.findOne({ 
+            $or: [{ username: identifier }, { email: identifier }] 
+        });
         if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(400).send('Invalid username or password');
+            return res.status(400).send('Invalid username/email or password');
         }
 
         req.session.user = { id: user._id, username: user.username };
         
-        // Set a cookie with the user ID
-        res.cookie('userId', user._id, { httpOnly: true });
-        res.redirect('/');
+        // Set userId in a cookie
+        res.cookie('userId', user._id.toString(), { maxAge: 3600000 }); // Cookie expires in 1 hour
 
+        res.redirect('/');
     } catch (error) {
         console.error('Error during login:', error);
         res.status(500).send('Internal server error');
     }
 });
-
 
 // Handle user logout
 app.post('/logout', (req, res) => {
@@ -379,6 +353,29 @@ app.get('/api/favorite/:userId', async (req, res) => {
     } catch (error) {
         console.error('Error fetching favorites:', error);
         res.status(500).send('Internal server error');
+    }
+});
+app.put('/api/updateReadStatus', async (req, res) => {
+    const { userId, mangaId, status } = req.body;
+
+    try {
+        const db = await connectDB(); // Connect to MongoDB
+        const readListCollection = db.collection('readList'); // Assuming readList is the collection name
+
+        // Assuming you have a MongoDB collection named 'readList'
+        const result = await readListCollection.updateOne(
+            { userId: userId, mangaId: mangaId },
+            { $set: { status: status } }
+        );
+
+        if (result.modifiedCount === 0) {
+            return res.status(404).json({ error: 'Manga not found in the read list' });
+        }
+
+        res.json({ message: 'Read status updated successfully' });
+    } catch (error) {
+        console.error('Error updating read status:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 app.listen(port, () => {

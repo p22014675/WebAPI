@@ -25,6 +25,13 @@ loadLastVisitedManga();
 });
 async function fetchRandomManga() {
     try {
+        // Get userId from cookie
+        const userId = getCookie('userId');
+        if (!userId) {
+            console.error('User ID not found in cookie');
+            return;
+        }
+
         const response = await fetch('/api/random');
         const data = await response.json();
 
@@ -74,14 +81,18 @@ async function fetchRandomManga() {
             chaptersList.innerText = 'No chapters available';
         }
 
+        // Fetch user's favorite list
+        const favoriteResponse = await fetch(`/api/favorite/${userId}`);
+        const favoriteData = await favoriteResponse.json();
+
         const favoriteCheckbox = document.getElementById('favoriteCheckbox');
-        favoriteCheckbox.checked = false; // Reset the checkbox state
+        const isFavorited = favoriteData.some(item => item.mangaId === mangaId);
+        favoriteCheckbox.checked = isFavorited;
         favoriteCheckbox.onclick = () => toggleFavorite(mangaId);
     } catch (error) {
         console.error('Error fetching random manga:', error);
     }
 }
-
 function createChapterButton(chapter, mangaId) {
     const chapterButton = document.createElement('button');
     chapterButton.classList.add('randomMangaChapter__button'); // Add class attribute
@@ -102,7 +113,7 @@ function createEllipsisButton() {
 
 async function toggleFavorite(mangaId) {
     const favoriteCheckbox = document.getElementById('favoriteCheckbox');
-    const status = favoriteCheckbox.checked ? 'read' : 'haven\'t read';
+    const status = favoriteCheckbox.checked ? 'Reading' : 'Completed';
 
     try {
         const response = await fetch('/api/readList', {
@@ -124,27 +135,71 @@ async function toggleFavorite(mangaId) {
         favoriteCheckbox.checked = !favoriteCheckbox.checked; // Revert the checkbox state if there was an error
     }
 }
+async function toggleFavorites(mangaId) {
+    const favoriteCheckbox = document.getElementById(`favoriteCheckbox-${mangaId}`);
+    const status = favoriteCheckbox.checked ? 'Reading' : 'Completed';
 
+    try {
+        const response = await fetch('/api/readList', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mangaId, status })
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.error);
+            favoriteCheckbox.checked = !favoriteCheckbox.checked; // Revert the checkbox state if there was an error
+        } else {
+            const message = favoriteCheckbox.checked ? 'Manga added to reading list' : 'Manga removed from reading list';
+            alert(message);
+        }
+    } catch (error) {
+        console.error('Error toggling favorite:', error);
+        favoriteCheckbox.checked = !favoriteCheckbox.checked; // Revert the checkbox state if there was an error
+    }
+}
 async function fetchRecentMangaUpdates() {
     try {
+        // Get userId from cookie
+        const userId = getCookie('userId');
+        if (!userId) {
+            console.error('User ID not found in cookie');
+            return;
+        }
+
+        // Fetch recent manga updates
         const response = await fetch('/api/recent-updates');
         const data = await response.json();
+
+        // Fetch user's favorite list
+        const favoriteResponse = await fetch(`/api/favorite/${userId}`);
+        const favoriteData = await favoriteResponse.json();
+
         const recentUpdatesContainer = document.getElementById('recentUpdatesContainer');
 
         if (Array.isArray(data)) {
             data.forEach(async manga => {
+                // Extract manga details
+                const mangaId = manga.id;
                 const coverArtRelation = manga.relationships.find(rel => rel.type === 'cover_art');
-                const coverArtUrl = coverArtRelation ? `https://uploads.mangadex.org/covers/${manga.id}/${coverArtRelation.attributes.fileName}` : '';
+                const coverArtUrl = coverArtRelation ? `https://uploads.mangadex.org/covers/${mangaId}/${coverArtRelation.attributes.fileName}` : '';
                 const mangaTitle = manga.attributes.title.en || 'No title available';
                 const latestChapterId = manga.attributes.latestUploadedChapter || 'N/A';
 
+                // Create manga card element
                 const card = document.createElement('div');
                 card.className = 'manga-card';
                 const cardContent = document.createElement('div');
                 cardContent.className = 'card-content';
                 card.innerHTML = `<img src="${coverArtUrl}" alt="Cover Art">`;
                 cardContent.innerHTML = `<div class="truncate resultTitle">${mangaTitle}</div>`;
-                
+
+                // Create container for chapter button and favorite checkbox
+                const chapterFavoriteContainer = document.createElement('div');
+                chapterFavoriteContainer.className = 'chapter-favorite-container';
+
+                // Create chapter button
                 let chapterButton = 'N/A';
                 if (latestChapterId !== 'N/A') {
                     const chapterResponse = await fetch(`https://api.mangadex.org/chapter/${latestChapterId}`);
@@ -154,12 +209,41 @@ async function fetchRecentMangaUpdates() {
                     chapterButton.classList.add('chapter__button');
                     chapterButton.innerHTML = `<span>Chapter ${chapterNumber}</span>`;
                     chapterButton.onclick = () => {
-                        saveHistory(manga.id, latestChapterId); // Save history when button is clicked
+                        saveHistory(mangaId, latestChapterId); // Save history when button is clicked
                         window.open(`https://mangadex.org/chapter/${latestChapterId}`, '_blank');
                     };
-                    cardContent.appendChild(chapterButton); // Append button to card content
+                    chapterFavoriteContainer.appendChild(chapterButton); // Append button to chapter-favorite container
                 }
 
+                // Create favorite checkbox
+                const favoriteCheckbox = document.createElement('input');
+                favoriteCheckbox.type = 'checkbox';
+                favoriteCheckbox.id = `favoriteCheckbox-${mangaId}`;
+                favoriteCheckbox.className = 'favoriteCheckbox';
+
+                const isFavorited = favoriteData.some(item => item.mangaId === mangaId);
+                if (isFavorited) {
+                    favoriteCheckbox.checked = true;
+                }
+
+                favoriteCheckbox.onclick = () => toggleFavorite(mangaId);
+
+                const favoriteLabel = document.createElement('label');
+                favoriteLabel.htmlFor = `favoriteCheckbox-${mangaId}`;
+                favoriteLabel.className = 'favorite-container';
+                favoriteLabel.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                    <div class="action">
+                        <span class="option-1">Add to Favorites</span>
+                        <span class="option-2">Added to Favorites</span>
+                    </div>
+                `;
+
+                chapterFavoriteContainer.appendChild(favoriteCheckbox);
+                chapterFavoriteContainer.appendChild(favoriteLabel);
+                cardContent.appendChild(chapterFavoriteContainer);
                 card.appendChild(cardContent);
                 recentUpdatesContainer.appendChild(card);
             });
@@ -251,7 +335,7 @@ async function getLatestChapter(mangaId) {
                 latestChapter = `Volume ${volume}, Chapter ${chapter}`;
             }
         }
-        return latestChapter || 'No chapters available';
+        return latestChapter || 'OneShot';
     } catch (error) {
         console.error('Error fetching latest chapter:', error);
         return 'Error fetching chapters';
@@ -296,34 +380,45 @@ async function saveHistory(mangaId, chapter) {
         console.error('Error saving history:', error.message);
     }
 }
-async function fetchMangaDetails(mangaId) {
+async function fetchMangaDetails(mangaId, chapterId) {
     try {
-        const response = await fetch(`https://api.mangadex.org/manga/${mangaId}`);
-        const mangaData = await response.json();
+        // Fetch manga details
+        const mangaResponse = await fetch(`https://api.mangadex.org/manga/${mangaId}`);
+        const mangaData = await mangaResponse.json();
 
-        if (mangaData.result === 'ok' && mangaData.response === 'entity') {
-            const mangaAttributes = mangaData.data.attributes;
-            const mangaTitle = mangaAttributes.title.en || 'No title available';
-            const coverArtRelation = mangaData.data.relationships.find(rel => rel.type === 'cover_art');
-            let coverArtUrl = '';
-            
-            if (coverArtRelation) {
-                const coverArtId = coverArtRelation.id;
-                const coverArtResponse = await fetch(`https://api.mangadex.org/cover/${coverArtId}`);
-                const coverArtData = await coverArtResponse.json();
-                coverArtUrl = coverArtData.data.attributes.fileName;
-            }
-
-            coverArtUrl = coverArtUrl ? `https://uploads.mangadex.org/covers/${mangaId}/${coverArtUrl}` : '';
-            
-            return {
-                title: mangaTitle,
-                coverArtUrl: coverArtUrl
-            };
-        } else {
-            console.error('Error fetching manga details:', mangaData);
-            return null;
+        if (mangaData.result !== 'ok' || mangaData.response !== 'entity') {
+            throw new Error('Failed to fetch manga details');
         }
+
+        const mangaAttributes = mangaData.data.attributes;
+        const mangaTitle = mangaAttributes.title.en || 'No title available';
+
+        // Fetch cover art
+        const coverArtRelation = mangaData.data.relationships.find(rel => rel.type === 'cover_art');
+        let coverArtUrl = '';
+        if (coverArtRelation) {
+            const coverArtId = coverArtRelation.id;
+            const coverArtResponse = await fetch(`https://api.mangadex.org/cover/${coverArtId}`);
+            const coverArtData = await coverArtResponse.json();
+            coverArtUrl = coverArtData.data.attributes.fileName;
+        }
+        coverArtUrl = coverArtUrl ? `https://uploads.mangadex.org/covers/${mangaId}/${coverArtUrl}` : '';
+
+        // Fetch chapter number
+        const chapterResponse = await fetch(`https://api.mangadex.org/chapter/${chapterId}`);
+        console.log(chapterId);
+        const chapterData = await chapterResponse.json();
+        if (chapterData.result !== 'ok' || chapterData.response !== 'entity') {
+            throw new Error('Failed to fetch chapter number');
+        }
+        const chapterAttributes = chapterData.data.attributes;
+        const chapterNumber = chapterAttributes.chapter;
+
+        return {
+            title: mangaTitle,
+            coverArtUrl: coverArtUrl,
+            chapterNumber: chapterNumber
+        };
     } catch (error) {
         console.error('Error fetching manga details:', error);
         return null;
@@ -332,43 +427,69 @@ async function fetchMangaDetails(mangaId) {
 
 async function loadLastVisitedManga() {
     try {
-        const userId = document.getElementById('lastVisitedContent').dataset.userid;
+        // Get userId from cookie
+        const userId = getCookie('userId');
+        if (!userId) {
+            console.error('User ID not found in cookie');
+            return;
+        }
+
         const response = await fetch(`/api/history/${userId}`);
         const data = await response.json();
         const lastVisitedContainer = document.getElementById('lastVisitedContent');
 
-        if (Array.isArray(data)) {
-            for (const manga of data) {
+        // Clear any previous content
+        lastVisitedContainer.innerHTML = '';
+
+        if (Array.isArray(data) && data.length > 0) {
+            for (const historyItem of data) {
+                const { mangaId, chapter } = historyItem;
+
                 const card = document.createElement('div');
                 card.className = 'last-visited-cell';
 
-                const mangaDetails = await fetchMangaDetails(manga.mangaId);
+                const mangaDetails = await fetchMangaDetails(mangaId, chapter);
                 if (mangaDetails) {
-                    const { title, coverArtUrl } = mangaDetails;
-                    const chapterNumber = parseInt(manga.chapter, 10);
+                    const { title, coverArtUrl, chapterNumber } = mangaDetails;
 
                     const chapterButton = document.createElement('button');
                     chapterButton.className = 'chapter__button';
                     chapterButton.innerHTML = `<span>Chapter: ${chapterNumber}</span>`;
                     chapterButton.onclick = () => {
-                        saveHistory(manga.mangaId, chapterNumber); // Save history when button is clicked
-                        window.open(`https://mangadex.org/chapter/${chapterNumber}`, '_blank');
+                        saveHistory(mangaId, chapter); // Save history when button is clicked
+                        window.open(`https://mangadex.org/chapter/${chapter}`, '_blank');
                     };
 
                     card.innerHTML = `
                         <img src="${coverArtUrl}" alt="${title} Cover Art">
-                        <div class="truncate">${title}</div>
+                        <div class="last-truncate">${title}</div>
                     `;
                     card.appendChild(chapterButton);
                     lastVisitedContainer.appendChild(card);
+                } else {
+                    console.error('Failed to fetch manga details');
                 }
             }
         } else {
-            console.error('Invalid data format for last visited manga:', data);
+            const messageSpan = document.createElement('span');
+            messageSpan.className = 'no-history-message';
+            messageSpan.textContent = 'You have not read any chapters yet. Start reading to see your history here!';
+            lastVisitedContainer.appendChild(messageSpan);
         }
     } catch (error) {
         console.error('Error loading last visited manga:', error);
     }
+}
+// Function to get cookie value by name
+function getCookie(name) {
+    const cookies = document.cookie.split('; ');
+    for (const cookie of cookies) {
+        const [cookieName, cookieValue] = cookie.split('=');
+        if (cookieName === name) {
+            return cookieValue;
+        }
+    }
+    return null;
 }
 document.getElementById('logoutButton').addEventListener('click', function(e) {
     e.preventDefault();

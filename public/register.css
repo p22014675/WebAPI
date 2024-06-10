@@ -14,7 +14,7 @@ body {
 }
 .register {
     width: 370px;
-    height: 400px;
+    height: 450px;
     background: #2c2c2c;
     padding: 47px;
     padding-bottom: 57px;
@@ -27,6 +27,7 @@ body {
   }
   
   .register input[type="text"],
+  .register input[type="email"],
   .register input[type="password"] {
     opacity: 1;
     display: block;
@@ -86,7 +87,10 @@ body {
     animation: bounce 1s;
     -webkit-appearance: none;
   }
-  
+  .register input[type=email] {
+    animation: bounce 1.2s;
+    -webkit-appearance: none;
+  }
   .register input[type=password] {
     animation: bounce1 1.3s;
   }
