@@ -54,7 +54,7 @@ async function fetchRandomManga() {
                 rowContainer.classList.add('chapter-row-container');
                 for (let i = 0; i < 14; i++) {
                     const chapter = chapters[i];
-                    const chapterButton = createChapterButton(chapter, mangaId);
+                    const chapterButton = createChapterButton(chapter.attributes.chapter, mangaId, chapter.id);
                     rowContainer.appendChild(chapterButton);
                 }
                 chaptersList.appendChild(rowContainer);
@@ -63,7 +63,7 @@ async function fetchRandomManga() {
                 
                 // Display the last chapter
                 const lastChapter = chapters[chapters.length - 1];
-                const lastChapterButton = createChapterButton(lastChapter, mangaId);
+                const lastChapterButton = createChapterButton(lastChapter.attributes.chapter, mangaId, lastChapter.id);
                 chaptersList.appendChild(lastChapterButton);
                 chaptersList.appendChild(document.createElement('br'));
             } else {
@@ -71,7 +71,7 @@ async function fetchRandomManga() {
                 const rowContainer = document.createElement('div');
                 rowContainer.classList.add('chapter-row-container');
                 chapters.forEach(chapter => {
-                    const chapterButton = createChapterButton(chapter, mangaId);
+                    const chapterButton = createChapterButton(chapter.attributes.chapter, mangaId, chapter.id);
                     rowContainer.appendChild(chapterButton);
                 });
                 chaptersList.appendChild(rowContainer);
@@ -93,17 +93,21 @@ async function fetchRandomManga() {
         console.error('Error fetching random manga:', error);
     }
 }
-function createChapterButton(chapter, mangaId) {
+
+function createChapterButton(chapter, mangaId, chapterId) {
     const chapterButton = document.createElement('button');
     chapterButton.classList.add('randomMangaChapter__button'); // Add class attribute
-    chapterButton.innerText = `Chapter ${chapter.attributes.chapter || 'N/A'}`;
+
+    chapterButton.innerText = `Chapter ${chapter || 'N/A'}`;
+
     chapterButton.onclick = () => {
-        const chapterNumber = chapter.attributes.chapter || 'N/A';
-        saveHistory(mangaId, chapterNumber);
-        window.open(`https://mangadex.org/chapter/${chapter.id}`, '_blank');
+        saveHistory(mangaId, chapterId);
+        window.open(`https://mangadex.org/chapter/${chapterId}`, '_blank');
     };
+
     return chapterButton;
 }
+
 function createEllipsisButton() {
     const ellipsisButton = document.createElement('span');
     ellipsisButton.innerText = 'Latest Chapter : ';

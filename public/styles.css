@@ -92,13 +92,13 @@ nav a:hover {
 }
 /* Manga updates styling */
 #recentUpdatesContainer {
-  margin: 20px auto;
+  margin: 20px 20px 0px 20px;
   width: 800px;
   color: white;
   text-align: left;
   background-color:#29292c;
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 10px 10px 0px 0px;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
@@ -1009,4 +1009,55 @@ margin-bottom: 10px;
 .readStatus:active {
   transform: scale(0.95);
 }
+#loadContent{
+  width: 80%;
+  width: 80%;
+  color: white;
+  text-align: left;
+  background-color:#29292c;
+  padding: 10px;
+  border-radius: 0px 0px 10px 10px;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+.load-button {
+  position: relative;
+  overflow: hidden;
+  height: 3rem;
+  padding: 0 2rem;
+  border-radius: 1.5rem;
+  background: #3d3a4e;
+  background-size: 400%;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
 
+.load-button:hover::before {
+  transform: scaleX(1);
+}
+
+.load-content {
+  position: relative;
+  z-index: 1;
+}
+
+.load-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  width: 100%;
+  height: inherit;
+  border-radius: inherit;
+  background: linear-gradient(
+    82.3deg,
+    rgba(150, 93, 233, 1) 10.8%,
+    rgba(99, 88, 238, 1) 94.3%
+  );
+  transition: all 0.475s;
+}

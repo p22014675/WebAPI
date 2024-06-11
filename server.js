@@ -49,6 +49,9 @@ app.get('/', isAuthenticated, (req, res) => {
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/login.html'));
 });
+app.get('/forgotpassword', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/forgotpassword.html'));
+});
 
 app.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/register.html'));

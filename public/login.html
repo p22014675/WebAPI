@@ -6,21 +6,17 @@
     <link rel="stylesheet" href="/loginstyles.css">
 </head>
 <body>
-    <div class="login">
+    <div class="login" id="login-card">
         <h1 class="h1 ui">Login</h1>
-        <form action="/login" method="POST">
+        <form action="/login" method="POST" id="login-form">
             <label for="identifier">Username or Email:</label>
             <input type="text" id="identifier" name="identifier" required>
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
             <input type="submit" value="Login" class="btn">
-            
         </form>
         <button class="btn2" onclick="window.location.href='/register'">Register</button>
+        <a href="#" class="forgot-password-link" id="forgot-password-link" onclick="window.location.href='/forgotpassword'">Forgot password?</a>  
     </div>
-    <script>
-        
-    </script>
 </body>
-
 </html>
