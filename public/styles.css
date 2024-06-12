@@ -933,8 +933,11 @@ text-align: center;
 }
 
 .favorite-card-content .resultTitle {
-  margin-bottom: 10px; /* Increased margin for better spacing */
+  height: 40px;
+  margin-bottom: 10px;
+  overflow: hidden;
 }
+
 
 .favorite-card-content .resultChapter {
   margin-bottom: 10px; /* Increased margin for better spacing */
@@ -958,10 +961,9 @@ font-size:35px;
   overflow: hidden;
   cursor: pointer;
   padding:0;
-margin-top: 10px;
 margin-left:auto;
 margin-right: auto;
-margin-bottom: 10px;
+margin-bottom: auto;
 
 }
 
@@ -1022,7 +1024,7 @@ margin-bottom: 10px;
   justify-content: center;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
-.load-button {
+.load-more-button {
   position: relative;
   overflow: hidden;
   height: 3rem;
@@ -1035,7 +1037,7 @@ margin-bottom: 10px;
   cursor: pointer;
 }
 
-.load-button:hover::before {
+.load-more-button:hover::before {
   transform: scaleX(1);
 }
 
@@ -1044,7 +1046,7 @@ margin-bottom: 10px;
   z-index: 1;
 }
 
-.load-button::before {
+.load-more-button::before {
   content: "";
   position: absolute;
   top: 0;
@@ -1060,4 +1062,40 @@ margin-bottom: 10px;
     rgba(99, 88, 238, 1) 94.3%
   );
   transition: all 0.475s;
+}
+.bin-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 55px;
+  height: 55px;
+  border-radius: 15px;
+  background-color: rgb(255, 95, 95);
+  cursor: pointer;
+  border: 3px solid rgb(255, 201, 201);
+  transition-duration: 0.3s;
+}
+.bin-bottom {
+  width: 15px;
+}
+.bin-top {
+  width: 17px;
+  transform-origin: right;
+  transition-duration: 0.3s;
+}
+.bin-button:hover .bin-top {
+  transform: rotate(45deg);
+}
+.bin-button:hover {
+  background-color: rgb(255, 0, 0);
+}
+.bin-button:active {
+  transform: scale(0.9);
+}
+.button-container{
+  display:flex;
+  height:50px;
+  gap: 10px;
+  margin-top:20px;
 }

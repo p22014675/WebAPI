@@ -63,10 +63,12 @@ app.get('/api/checkAuth', (req, res) => {
         res.status(401).json({ error: 'Not authenticated' });
     }
 });
-app.get('/favorite', (req, res) => {
+app.get('/favorite',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/favorite.html'));
 });
-
+app.get('/account',isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/account.html'));
+});
 // Handle user registration
 app.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
@@ -331,7 +333,7 @@ const fetchMangaDetailsWithCoverArt = async (mangaId) => {
         return null;
     }
 };
-app.get('/api/favorite/:userId', async (req, res) => {
+app.get('/api/favorite/:userId',isAuthenticated, async (req, res) => {
     const userId = req.params.userId;
     try {
         const db = await connectDB(); // Connect to MongoDB
@@ -358,7 +360,7 @@ app.get('/api/favorite/:userId', async (req, res) => {
         res.status(500).send('Internal server error');
     }
 });
-app.put('/api/updateReadStatus', async (req, res) => {
+app.put('/api/updateReadStatus',isAuthenticated,  async (req, res) => {
     const { userId, mangaId, status } = req.body;
 
     try {
@@ -379,6 +381,25 @@ app.put('/api/updateReadStatus', async (req, res) => {
     } catch (error) {
         console.error('Error updating read status:', error);
         res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.delete('/api/remove-favorite',isAuthenticated, async (req, res) => {
+    const { userId, mangaId } = req.body;
+    try {
+        const db = await connectDB();
+        const readListCollection = db.collection('readList');
+
+        const result = await readListCollection.deleteOne({ userId: userId, mangaId: mangaId });
+
+        if (result.deletedCount > 0) {
+            res.status(200).json({ message: 'Manga removed successfully' });
+        } else {
+            res.status(404).json({ message: 'Manga not found' });
+        }
+    } catch (error) {
+        console.error('Error removing manga:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 });
 app.listen(port, () => {

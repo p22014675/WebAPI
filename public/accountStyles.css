@@ -1,0 +1,178 @@
+/* General styling */
+body {
+    width: 100%;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background-color: #313131;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.171) 2px, transparent 0);
+    background-size: 30px 30px;
+    background-position: -5px -5px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header, footer {
+    background-color: #333;
+    color: white;
+    padding: 10px 0;
+    width: 100%;
+    text-align: center;
+}
+
+header h1, footer p {
+    margin: 0;
+}
+
+nav {
+    margin: 20px 0;
+}
+
+nav a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #007bff;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+.manga-menu {
+    display: block;
+    width: 100%;
+    background: #29292c;
+    line-height: 1.6em;
+    font-weight: 400;
+    text-align: center;
+    position: relative;
+    margin: 0 auto;
+  }
+  
+  /* Strip the ul of padding and list styling */
+  .manga-menu ul {
+    
+    list-style-type: none;
+    margin: 0 auto;
+    padding-left: 0;
+    text-align: center;
+    width: 100%;
+    position: absolute;
+    background: #29292c;
+  }
+  
+  /* Create a horizontal list with spacing */
+  .manga-menu li {
+    display: inline-block;
+  }
+  
+  /* Style for menu links */
+  .manga-menu li a {
+    display: block;
+    min-width: 140px;
+    text-align: center;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: white;
+    text-transform: normal;
+    background: #29292c;
+    text-decoration: none;
+    margin-left: -5px;
+    padding: 10px 0;
+    transition: all 0.4s ease 0s;
+  }
+  
+  /* Hover state for top level links */
+  .manga-menu li:hover a {
+    color: rgba(0, 0, 0, 0.5);
+    background-color: lightgray;
+  }
+  
+  /* Style for dropdown links */
+  .manga-menu li:hover ul a {
+    background: #29292c;
+    color: white;
+    height: 40px;
+    line-height: 40px;
+  }
+  
+  /* Hover state for dropdown links */
+  .manga-menu li:hover .manga-menu ul a:hover {
+    color: lightgray;
+  }
+  
+  /* Hide dropdown links until they are needed */
+  .manga-menu li ul {
+    display: none;
+  }
+  
+  /* Make dropdown links vertical */
+  .manga-menu li ul li {
+    display: block;
+    float: none;
+  }
+  
+  /* Prevent text wrapping */
+  .manga-menu li ul li a {
+    width: auto;
+    min-width: 100px;
+    padding: 0 20px;
+  }
+  
+  /* Style 'show menu' label button and hide it by default */
+  .manga-menu .show-manga-menu {
+    text-decoration: none;
+    color: white;
+    background: #29292c;
+    text-align: center;
+    padding: 10px 15px;
+    display: none;
+    cursor: pointer;
+    text-transform: normal;
+  }
+  
+  .manga-menu .show-manga-menu span {
+    padding-left: 2em;
+    text-align: right;
+  }
+  
+  /* Hide checkbox */
+  .manga-menu input[type="checkbox"] {
+    display: none;
+  }
+  
+  /* Show menu when invisible checkbox is checked */
+  .manga-menu input[type="checkbox"]:checked ~ #manga-menu {
+    display: block;
+  }
+  
+  /* Responsive Styles */
+  @media screen and (max-width: 767px) {
+    .manga-menu .manga-lines {
+      border-bottom: 15px double black;
+      border-top: 5px solid black;
+      content: "";
+      height: 5px;
+      width: 20px;
+      padding-right: 15px;
+      float: right;
+    }
+    /* Make dropdown links appear inline */
+    .manga-menu ul {
+      position: static;
+      display: none;
+    }
+    /* Create vertical spacing */
+    .manga-menu li {
+      margin-bottom: 0;
+    }
+    /* Make all menu links full width */
+    .manga-menu ul li,
+    .manga-menu li a {
+      width: 100%;
+    }
+    /* Display 'show menu' link */
+    .manga-menu .show-manga-menu {
+      display: block;
+    }
+  }

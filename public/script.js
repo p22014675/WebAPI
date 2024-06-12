@@ -41,7 +41,11 @@ async function fetchRandomManga() {
         const coverArtUrl = data.coverArtUrl;
         const chapters = data.chapters || [];
 
-        document.getElementById('coverArt').src = coverArtUrl || '';
+        const coverArtElement = document.getElementById('coverArt');
+        coverArtElement.src = coverArtUrl || '';
+        coverArtElement.onclick = () => {
+            window.open(`https://mangadex.org/title/${mangaId}`, '_blank');
+        };
         document.getElementById('mangaTitle').innerText = `Title: ${mangaTitle}`;
         document.getElementById('mangaDescription').innerText = `Description: ${mangaDescription}`;
 
@@ -212,7 +216,8 @@ async function fetchRecentMangaUpdates() {
                     chapterButton = document.createElement('button');
                     chapterButton.classList.add('chapter__button');
                     chapterButton.innerHTML = `<span>Chapter ${chapterNumber}</span>`;
-                    chapterButton.onclick = () => {
+                    chapterButton.onclick = (event) => {
+                        event.stopPropagation(); // Prevent card click event from firing
                         saveHistory(mangaId, latestChapterId); // Save history when button is clicked
                         window.open(`https://mangadex.org/chapter/${latestChapterId}`, '_blank');
                     };
@@ -230,7 +235,10 @@ async function fetchRecentMangaUpdates() {
                     favoriteCheckbox.checked = true;
                 }
 
-                favoriteCheckbox.onclick = () => toggleFavorite(mangaId);
+                favoriteCheckbox.onclick = (event) => {
+                    event.stopPropagation(); // Prevent card click event from firing
+                    toggleFavorite(mangaId);
+                };
 
                 const favoriteLabel = document.createElement('label');
                 favoriteLabel.htmlFor = `favoriteCheckbox-${mangaId}`;
@@ -249,6 +257,12 @@ async function fetchRecentMangaUpdates() {
                 chapterFavoriteContainer.appendChild(favoriteLabel);
                 cardContent.appendChild(chapterFavoriteContainer);
                 card.appendChild(cardContent);
+
+                // Add onclick event to the card to open manga details page
+                card.onclick = () => {
+                    window.open(`https://mangadex.org/title/${mangaId}`, '_blank');
+                };
+
                 recentUpdatesContainer.appendChild(card);
             });
         } else {
@@ -258,6 +272,7 @@ async function fetchRecentMangaUpdates() {
         console.error('Error fetching recent manga updates:', error);
     }
 }
+
 document.querySelector('.search-manga-button').addEventListener('click', async () => {
     const query = document.getElementById('input-field-search').value.trim();
     if (query === '') {
@@ -315,6 +330,12 @@ async function displaySearchResults(mangas) {
                 </div>
                 <div class="resultChapter">${latestChapter}</div>
             `;
+
+            // Add the onclick event to open the manga details page
+            mangaElement.onclick = () => {
+                window.open(`https://mangadex.org/title/${manga.id}`, '_blank');
+            };
+
             resultsContainer.appendChild(mangaElement);
         }
     } else {
@@ -459,7 +480,8 @@ async function loadLastVisitedManga() {
                     const chapterButton = document.createElement('button');
                     chapterButton.className = 'chapter__button';
                     chapterButton.innerHTML = `<span>Chapter: ${chapterNumber}</span>`;
-                    chapterButton.onclick = () => {
+                    chapterButton.onclick = (event) => {
+                        event.stopPropagation(); // Prevent card click event from firing
                         saveHistory(mangaId, chapter); // Save history when button is clicked
                         window.open(`https://mangadex.org/chapter/${chapter}`, '_blank');
                     };
@@ -469,6 +491,12 @@ async function loadLastVisitedManga() {
                         <div class="last-truncate">${title}</div>
                     `;
                     card.appendChild(chapterButton);
+
+                    // Add onclick event to the card to open manga details page
+                    card.onclick = () => {
+                        window.open(`https://mangadex.org/title/${mangaId}`, '_blank');
+                    };
+
                     lastVisitedContainer.appendChild(card);
                 } else {
                     console.error('Failed to fetch manga details');
@@ -484,6 +512,7 @@ async function loadLastVisitedManga() {
         console.error('Error loading last visited manga:', error);
     }
 }
+
 // Function to get cookie value by name
 function getCookie(name) {
     const cookies = document.cookie.split('; ');
