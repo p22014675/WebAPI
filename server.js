@@ -6,7 +6,7 @@ const path = require('path');
 const axios = require('axios');
 const { connectDB } = require('./db');
 const HistoryList = require('./historyListSchema');
-
+const { ObjectId } = require('mongodb');
 const app = express();
 const port = 3000;
 
@@ -399,6 +399,74 @@ app.delete('/api/remove-favorite',isAuthenticated, async (req, res) => {
         }
     } catch (error) {
         console.error('Error removing manga:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
+// Endpoint to get user details by userId
+app.get('/api/user-details/:userId', isAuthenticated, async (req, res) => {
+    try {
+        // Get userId from URL parameters
+        const userId = req.params.userId;
+        if (!userId) {
+            return res.status(400).json({ message: 'User ID not provided' });
+        }
+
+        const db = await connectDB();
+        const userCollection = db.collection('users');
+        
+        // Convert userId string to MongoDB ObjectId
+        const objectId = new ObjectId(userId);
+
+        // Find the user with the provided _id (MongoDB ObjectId)
+        const user = await userCollection.findOne({ _id: objectId });
+
+        if (user) {
+            res.json({ username: user.username, email: user.email });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching user details:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+// Endpoint to clear the last visited manga for a user
+app.delete('/api/clear-last-visited/:userId', isAuthenticated, async (req, res) => {
+    const userId = req.params.userId;
+    try {
+        const db = await connectDB();
+        const historyListCollection = db.collection('historyList');
+
+        const result = await historyListCollection.deleteMany({ userId: userId });
+
+        if (result.deletedCount > 0) {
+            res.status(200).json({ message: 'Last visited list cleared successfully' });
+        } else {
+            res.status(404).json({ message: 'No last visited items found for the user' });
+        }
+    } catch (error) {
+        console.error('Error clearing last visited list:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+app.delete('/api/clear-favorites/:userId', isAuthenticated, async (req, res) => {
+    const userId = req.params.userId;
+    try {
+        const db = await connectDB();
+        const readListCollection = db.collection('readList');
+
+        const result = await readListCollection.deleteMany({ userId: userId });
+
+        if (result.deletedCount > 0) {
+            res.status(200).json({ message: 'All favorites cleared successfully' });
+        } else {
+            res.status(404).json({ message: 'No favorites found for the user' });
+        }
+    } catch (error) {
+        console.error('Error clearing favorites:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });

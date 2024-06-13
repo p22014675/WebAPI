@@ -176,3 +176,192 @@ nav a:hover {
       display: block;
     }
   }
+  h1{
+    align-self: center;
+  }
+  .card {
+    width: 20%;
+    height: 100%;
+    border-radius: 20px;
+    color:white;
+    margin:10%;
+    box-shadow: 15px 15px 30px rgb(25, 25, 25);
+    
+  }
+  .textContainer{
+    width: 80%;
+  text-align: left;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  }
+  .avatarImage {
+    background: linear-gradient(to right,rgb(54, 54, 54),rgb(32, 32, 32));
+    margin:20px auto 20px auto;
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    box-shadow: 5px 10px 20px rgba(0, 0, 0, 0.329);
+  }
+  .name {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: white;
+    letter-spacing: 0.5px;
+  }
+  .email {
+    font-size: 0.84em;
+    color: rgb(194, 194, 194);
+    letter-spacing: 0.2px;
+  }
+  
+  .card__content {
+    background: rgb(39, 39, 39);
+  border-radius: 12px;
+  box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.123);
+    width: 100%;
+    height: 640px;
+    display:flex;
+    flex-direction: column;
+    gap:10px; 
+
+  }
+
+  .button {
+    position: relative;
+    width: 65%;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border: 1px solid #cc0000;
+    background-color: #cc0000;
+    overflow: hidden;
+    margin:10px auto 10px auto;
+    border-radius: 15px;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 400;
+    letter-spacing: 1px;
+  }
+  
+  .button, .button__icon, .button__text {
+    transition: all 0.3s;
+  }
+  
+  .button .button__text {
+    transform: translateX(35px);
+    color: #fff;
+    font-weight: 600;
+  }
+  
+  .button .button__icon {
+    position:absolute;
+    right:35%;
+    transform: translateX(109px);
+    height: 100%;
+    width: 39px;
+    background-color: #cc0000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .button .svg {
+    width: 20px;
+  }
+  
+  .button:hover {
+    background: #8f2222;
+  }
+  
+  .button:hover .button__text {
+    color: transparent;
+  }
+  
+  .button:hover .button__icon {
+    width:20%;
+    transform: translateX(0);
+  }
+  
+  .button:active .button__icon {
+    background-color: #cc0000;
+  }
+  
+  .button:active {
+    border: 1px solid #cc0000;
+  }
+  .button_chgPwd {
+    width:66%;
+    position: relative;
+    padding: 10px 20px;
+    border-radius: 7px;
+    border: 1px solid rgb(61, 106, 255);
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 2px;
+    background: transparent;
+    color: #fff;
+    overflow: hidden;
+    box-shadow: 0 0 0 0 transparent;
+    -webkit-transition: all 0.2s ease-in;
+    -moz-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    margin:10px auto 10px auto;
+  }
+  
+ .button_chgPwd:hover {
+    background: rgb(61, 106, 255);
+    box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815);
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+  }
+  
+  .button_chgPwd:hover::before {
+    -webkit-animation: sh02 0.5s 0s linear;
+    -moz-animation: sh02 0.5s 0s linear;
+    animation: sh02 0.5s 0s linear;
+  }
+  
+  .button_chgPwd::before {
+    content: '';
+    display: block;
+    width: 0px;
+    height: 86%;
+    position: absolute;
+    top: 7%;
+    left: 0%;
+    opacity: 0;
+    background: #fff;
+    box-shadow: 0 0 50px 30px #fff;
+    -webkit-transform: skewX(-20deg);
+    -moz-transform: skewX(-20deg);
+    -ms-transform: skewX(-20deg);
+    -o-transform: skewX(-20deg);
+    transform: skewX(-20deg);
+  }
+  
+  @keyframes sh02 {
+    from {
+      opacity: 0;
+      left: 0%;
+    }
+  
+    50% {
+      opacity: 1;
+    }
+  
+    to {
+      opacity: 0;
+      left: 100%;
+    }
+  }
+  
+  .button_chgPwd:active {
+    box-shadow: 0 0 0 0 transparent;
+    -webkit-transition: box-shadow 0.2s ease-in;
+    -moz-transition: box-shadow 0.2s ease-in;
+    transition: box-shadow 0.2s ease-in;
+  }
