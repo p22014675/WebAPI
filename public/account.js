@@ -24,26 +24,36 @@ document.getElementById('chgPwd').addEventListener('click', () => {
 });
 
 // Handle Clear Favorite List button click
-document.getElementById('clearFavorite').addEventListener('click', async () => {
-    try {
-            // Fetch user details using the userId from the cookie
-        const userId = getCookie('userId');
-        if (!userId) {
-            throw new Error('User ID not found in cookie');
-        }
-        const response = await fetch(`/api/clear-favorite/${userId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
+document.addEventListener('DOMContentLoaded', () => {
+    const clearFavoriteButton = document.getElementById('clearFavorite');
+
+    if (clearFavoriteButton) {
+        clearFavoriteButton.addEventListener('click', async () => {
+            try {
+                const userId = getCookie('userId'); 
+
+                const response = await fetch(`/api/clear-favorite/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(data.message); // Display success message
+                } else {
+                    alert(data.message); // Display error message
+                }
+            } catch (error) {
+                console.error('Error clearing favorite list:', error);
+                alert('Failed to clear favorite list. Please try again.');
+            }
         });
-        if (!response.ok) {
-            throw new Error('Failed to clear favorite list');
-        }
-        const result = await response.json();
-        alert(result.message); // Show a success message
-    } catch (error) {
-        console.error('Error clearing favorite list:', error);
     }
 });
+
 document.addEventListener('DOMContentLoaded', () => {
     const clearLastVisitButton = document.getElementById('clearLastVisit');
 

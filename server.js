@@ -452,7 +452,7 @@ app.delete('/api/clear-last-visited/:userId', isAuthenticated, async (req, res) 
     }
 });
 
-app.delete('/api/clear-favorites/:userId', isAuthenticated, async (req, res) => {
+app.delete('/api/clear-favorite/:userId', isAuthenticated, async (req, res) => {
     const userId = req.params.userId;
     try {
         const db = await connectDB();
