@@ -200,7 +200,18 @@ async function fetchRecentMangaUpdates() {
                 card.className = 'manga-card';
                 const cardContent = document.createElement('div');
                 cardContent.className = 'card-content';
-                card.innerHTML = `<img src="${coverArtUrl}" alt="Cover Art">`;
+                // Create img element
+                const img = document.createElement('img');
+                img.src = coverArtUrl;
+                img.alt = 'Cover Art';
+
+                // Add onclick event to the img element to open manga details page
+                img.onclick = () => {
+                window.open(`https://mangadex.org/title/${mangaId}`, '_blank');
+                };
+
+                // Append img element to the card
+                card.appendChild(img);
                 cardContent.innerHTML = `<div class="truncate resultTitle">${mangaTitle}</div>`;
 
                 // Create container for chapter button and favorite checkbox
@@ -257,11 +268,6 @@ async function fetchRecentMangaUpdates() {
                 chapterFavoriteContainer.appendChild(favoriteLabel);
                 cardContent.appendChild(chapterFavoriteContainer);
                 card.appendChild(cardContent);
-
-                // Add onclick event to the card to open manga details page
-                card.onclick = () => {
-                    window.open(`https://mangadex.org/title/${mangaId}`, '_blank');
-                };
 
                 recentUpdatesContainer.appendChild(card);
             });

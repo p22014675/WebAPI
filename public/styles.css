@@ -886,8 +886,8 @@ scrollbar-width: none;
   flex-wrap: wrap;
   overflow:auto;
   max-height:90%;
-  margin: 20px auto;
-  width: 75%;
+  margin: 15px auto;
+  width: 80%;
   color: white;
   text-align: left;
   background-color:#29292c;
@@ -901,7 +901,7 @@ text-align: center;
 }
 .favorite-manga-card {
   background-color: #29292c;
-  padding: 20px;
+  padding: 10px;
   margin: 5px;
   border-radius: 10px;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
