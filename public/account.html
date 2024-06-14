@@ -25,7 +25,7 @@
         <div class="card__content">
         <h1>Account Details</h1>
           <div class="avatarImage">
-           
+           <img class="avatarImage" src="Profile_avatar.png">
           </div>
           <div class="textContainer">
             <p class="name"></p>
@@ -44,6 +44,17 @@
           </button>
         </div>
     </div>
+    <div class="chgPwd-form" id="chgPwdForm">
+      <p class="heading">Change My Password</p>
+      <form class="form" id="chgPwdFormElement">
+          <label for="password1">New Password:</label>
+          <input required="" placeholder="Enter your password" name="password" id="password1" type="password">
+          <label for="password2">Re-type Password:</label>
+          <input required="" placeholder="Enter your password" name="password" id="password2" type="password">
+          <input value="Confirm" type="submit">
+      </form>
+  </div>
+  <div class="overlay" id="overlay"></div>
     <footer>
         <p>&copy; 2024 Manga Updates. All rights reserved.</p>
     </footer>

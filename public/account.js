@@ -17,10 +17,76 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
 })
-// Handle Change Password button click
-document.getElementById('chgPwd').addEventListener('click', () => {
-    // Redirect to change password page or open a modal
-    window.location.href = '/change-password'; // Adjust the URL as needed
+document.addEventListener('DOMContentLoaded', () => {
+    const chgPwdButton = document.getElementById('chgPwd');
+    const chgPwdForm = document.getElementById('chgPwdForm');
+    const overlay = document.getElementById('overlay');
+    const chgPwdFormElement = document.getElementById('chgPwdFormElement');
+
+    // Function to show the change password form
+    const showChgPwdForm = () => {
+        chgPwdForm.style.display = 'block';
+        overlay.style.display = 'block';
+    };
+
+    // Function to hide the change password form
+    const hideChgPwdForm = () => {
+        chgPwdForm.style.display = 'none';
+        overlay.style.display = 'none';
+    };
+
+    // Show the change password form when the button is clicked
+    chgPwdButton.addEventListener('click', showChgPwdForm);
+
+    // Hide the form when the overlay is clicked
+    overlay.addEventListener('click', hideChgPwdForm);
+
+    // Handle the form submission
+    chgPwdFormElement.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const password1 = document.getElementById('password1').value;
+        const password2 = document.getElementById('password2').value;
+
+        if (password1 !== password2) {
+            alert('Passwords do not match!');
+            return;
+        }
+
+        // Get the userId from the cookie
+        const getCookieValue = (name) => {
+            const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            return match ? match[2] : null;
+        };
+        const userId = getCookieValue('userId');
+
+        if (!userId) {
+            console.error('User ID not found in the cookie');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/change-password/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ password: password1 }),
+            });
+
+            if (response.ok) {
+                alert('Password changed successfully. Please log in again.');
+                // Redirect to login page
+                window.location.href = '/login';
+            } else {
+                const errorData = await response.json();
+                alert('Error changing password: ' + errorData.message);
+            }
+        } catch (error) {
+            console.error('Error changing password:', error);
+            alert('An error occurred. Please try again later.');
+        }
+    });
 });
 
 // Handle Clear Favorite List button click

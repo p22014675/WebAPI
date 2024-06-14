@@ -7,6 +7,8 @@ const axios = require('axios');
 const { connectDB } = require('./db');
 const HistoryList = require('./historyListSchema');
 const { ObjectId } = require('mongodb');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 const app = express();
 const port = 3000;
 
@@ -20,7 +22,17 @@ app.use(session({
     saveUninitialized: false,
     cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
 }));
-
+// Configure nodemailer
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // e.g., 'gmail'
+    host: "smtp.gmail.com",
+    port: 465, // Use port 587 for SMTP submission (STARTTLS)
+    secure: false, // No SSL/TLS
+    auth: {
+        user: 'racolee147@gmail.com',
+        pass: 'jxsq frxf rqwa fpgq'
+    }
+});
 // Fetch manga data
 const fetchMangaData = async (queryParams) => {
     try {
@@ -49,10 +61,6 @@ app.get('/', isAuthenticated, (req, res) => {
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/login.html'));
 });
-app.get('/forgotpassword', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/forgotpassword.html'));
-});
-
 app.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/register.html'));
 });
@@ -68,6 +76,22 @@ app.get('/favorite',isAuthenticated, (req, res) => {
 });
 app.get('/account',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/account.html'));
+});
+app.get('/api/reset-password/:token', (req, res) => {
+    // Serve the HTML file for resetting the password
+    res.sendFile(path.join(__dirname, 'public/resetPassword.html'));
+});
+app.get('/api/request-password-reset', async (req, res) => {
+    // Handle the GET request to request a password reset
+    // This endpoint may render a form or provide instructions to the user
+    // for initiating a password reset request
+    try {
+        // Direct the user to the resetPassword.html page
+        res.sendFile(path.join(__dirname, 'public/resetPassword.html'));
+    } catch (error) {
+        console.error('Error handling password reset request:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 });
 // Handle user registration
 app.post('/register', async (req, res) => {
@@ -133,7 +157,92 @@ app.post('/logout', (req, res) => {
         res.redirect('/login');
     });
 });
+app.post('/api/request-password-reset', async (req, res) => {
+    const { email } = req.body;
 
+    try {
+        const db = await connectDB();
+        const userCollection = db.collection('users');
+        const user = await userCollection.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const token = crypto.randomBytes(20).toString('hex');
+        const tokenExpiry = Date.now() + 3600000; // 1 hour expiry
+
+        await userCollection.updateOne({ email }, { $set: { resetPasswordToken: token, resetPasswordExpires: tokenExpiry } });
+
+        const resetLink = `http://localhost:3000/api/reset-password/${token}`;
+
+        const mailOptions = {
+            to: email,
+            from: 'racolee147@gmail.com',
+            subject: 'Password Reset',
+            text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
+                   Please click on the following link, or paste this into your browser to complete the process:\n\n
+                   ${resetLink}\n\n
+                   If you did not request this, please ignore this email and your password will remain unchanged.\n`
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({ message: 'Password reset email sent' });
+    } catch (error) {
+        console.error('Error sending password reset email:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+app.post('/api/reset-password/:token', async (req, res) => {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+
+    try {
+        // Log the request body for debugging
+        console.log('Request body:', req.body);
+
+        // Ensure new password is provided
+        if (!newPassword) {
+            console.error('No new password provided');
+            return res.status(400).json({ message: 'New password is required' });
+        }
+
+        const db = await connectDB();
+        const userCollection = db.collection('users');
+
+        // Find the user with the reset password token
+        const user = await userCollection.findOne({ resetPasswordToken: token });
+
+        // Check if the token is valid and not expired
+        if (!user || user.resetPasswordExpires < Date.now()) {
+            console.error('Invalid or expired token');
+            return res.status(400).json({ message: 'Invalid or expired token' });
+        }
+
+        // Compare the new password with the old password
+        const isSamePassword = await bcrypt.compare(newPassword, user.password);
+        if (isSamePassword) {
+            console.error('New password is the same as the old password');
+            return res.status(400).json({ message: 'New password cannot be the same as the old password' });
+        }
+
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Update the user's password and clear the reset token
+        await userCollection.updateOne(
+            { resetPasswordToken: token },
+            { $set: { password: hashedPassword, resetPasswordToken: null, resetPasswordExpires: null } }
+        );
+
+        res.status(200).json({ message: 'Password updated successfully' });
+    } catch (error) {
+        console.error('Error resetting password:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+    
 // Endpoint to add manga to read list
 app.post('/api/readList', isAuthenticated, async (req, res) => {
     const { mangaId, status } = req.body;
@@ -255,8 +364,9 @@ app.get('/api/random', isAuthenticated, async (req, res) => {
 app.get('/api/recent-updates', isAuthenticated, async (req, res) => {
     try {
         const queryParams = {
-            limit: 10,
+            limit: 9,
             order: { latestUploadedChapter: 'desc' },
+            'contentRating[]': ['safe', 'suggestive', 'erotica', 'pornographic'],
             includes: ['manga', 'cover_art'],
             hasAvailableChapters: 'true'
         };
@@ -284,6 +394,7 @@ app.get('/api/search', isAuthenticated, async (req, res) => {
                 title: query,
                 limit: 9,
                 includes: ['manga', 'cover_art']
+                
             },
             headers: {
                 'Cache-Control': 'no-cache',
@@ -467,6 +578,30 @@ app.delete('/api/clear-favorite/:userId', isAuthenticated, async (req, res) => {
         }
     } catch (error) {
         console.error('Error clearing favorites:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+app.put('/api/change-password/:userId', isAuthenticated, async (req, res) => {
+    const userId = req.params.userId;
+    const { password } = req.body;
+
+    try {
+        const db = await connectDB();
+        const usersCollection = db.collection('users');
+        const hashedPassword = await bcrypt.hash(password, 10); // Hash the new password
+
+        const result = await usersCollection.updateOne(
+            { _id: new ObjectId(userId) },
+            { $set: { password: hashedPassword } }
+        );
+
+        if (result.modifiedCount > 0) {
+            res.status(200).json({ message: 'Password changed successfully' });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error changing password:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });

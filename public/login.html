@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <title>Login</title>
     <link rel="stylesheet" href="/loginstyles.css">
+    <style>
+        .forgotPwd-form-container {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div class="login" id="login-card">
@@ -16,7 +21,62 @@
             <input type="submit" value="Login" class="btn">
         </form>
         <button class="btn2" onclick="window.location.href='/register'">Register</button>
-        <a href="#" class="forgot-password-link" id="forgot-password-link" onclick="window.location.href='/forgotpassword'">Forgot password?</a>  
+        <a href="#" class="forgot-password-link" id="forgot-password-link">Forgot password?</a>
     </div>
+    <div class="forgotPwd-form-container" id="forgotPwd-form-container">
+        <div class="logo-container">
+            Forgot Password
+        </div>
+        <form class="form" id="forgot-password-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="text" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+            <button class="form-submit-btn" type="submit">Send Email</button>
+        </form>
+        <p class="signup-link">
+            Don't have an account?
+            <a href="#" class="signup-link link" onclick="window.location.href='/register'">Sign up now</a>
+        </p>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const forgotPasswordLink = document.getElementById('forgot-password-link');
+            const forgotPwdFormContainer = document.getElementById('forgotPwd-form-container');
+            const loginCard = document.getElementById('login-card');
+            const forgotPasswordForm = document.getElementById('forgot-password-form');
+
+            forgotPasswordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginCard.style.display = 'none';
+                forgotPwdFormContainer.style.display = 'block';
+            });
+
+            forgotPasswordForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+
+                try {
+                    const response = await fetch('/api/request-password-reset', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email })
+                    });
+
+                    if (response.ok) {
+                        alert('Password reset email sent. Please check your inbox.');
+                    } else {
+                        const data = await response.json();
+                        alert(data.message || 'An error occurred. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error sending password reset email:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
