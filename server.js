@@ -24,10 +24,10 @@ app.use(session({
 }));
 // Configure nodemailer
 const transporter = nodemailer.createTransport({
-    service: 'gmail', // e.g., 'gmail'
+    service: 'gmail', 
     host: "smtp.gmail.com",
-    port: 465, // Use port 587 for SMTP submission (STARTTLS)
-    secure: false, // No SSL/TLS
+    port: 465,
+    secure: false, // No SSL/TLS cause localhost
     auth: {
         user: 'racolee147@gmail.com',
         pass: 'jxsq frxf rqwa fpgq'
@@ -82,9 +82,6 @@ app.get('/api/reset-password/:token', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/resetPassword.html'));
 });
 app.get('/api/request-password-reset', async (req, res) => {
-    // Handle the GET request to request a password reset
-    // This endpoint may render a form or provide instructions to the user
-    // for initiating a password reset request
     try {
         // Direct the user to the resetPassword.html page
         res.sendFile(path.join(__dirname, 'public/resetPassword.html'));
@@ -242,7 +239,7 @@ app.post('/api/reset-password/:token', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
-    
+
 // Endpoint to add manga to read list
 app.post('/api/readList', isAuthenticated, async (req, res) => {
     const { mangaId, status } = req.body;

@@ -13,6 +13,10 @@ body {
     flex-direction: column;
     align-items: center;
 }
+
+.forgot-password-link{
+  color:wheat;
+}
 .login {
     width: 370px;
     height: 400px;
@@ -156,7 +160,7 @@ body {
           transform: translate(-50%, -50%);
   max-width: 400px;
   background-color: #fff;
-  padding: 32px 24px;
+  padding: 32px 50px;
   font-size: 14px;
   font-family: inherit;
   color: #212121;
