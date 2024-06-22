@@ -22,7 +22,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
 }));
-// Configure nodemailer
+// Configure nodemailer for forgot password request
 const transporter = nodemailer.createTransport({
     service: 'gmail', 
     host: "smtp.gmail.com",
@@ -33,7 +33,6 @@ const transporter = nodemailer.createTransport({
         pass: 'jxsq frxf rqwa fpgq'
     }
 });
-// Fetch manga data
 const fetchMangaData = async (queryParams) => {
     try {
         const response = await axios.get('https://api.mangadex.org/manga', { params: queryParams });
@@ -42,8 +41,6 @@ const fetchMangaData = async (queryParams) => {
         throw new Error('Error fetching manga data');
     }
 };
-
-// Middleware to check if user is authenticated
 function isAuthenticated(req, res, next) {
     if (req.session.user) {
         next();
@@ -51,8 +48,6 @@ function isAuthenticated(req, res, next) {
         res.redirect('/login');
     }
 }
-
-// Serve the HTML files
 app.get('/', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/home.html'));
     
@@ -363,7 +358,7 @@ app.get('/api/recent-updates', isAuthenticated, async (req, res) => {
         const queryParams = {
             limit: 9,
             order: { latestUploadedChapter: 'desc' },
-            'contentRating[]': ['safe', 'suggestive', 'erotica', 'pornographic'],
+            'contentRating[]': ['safe'],
             includes: ['manga', 'cover_art'],
             hasAvailableChapters: 'true'
         };
@@ -379,8 +374,6 @@ app.get('/api/recent-updates', isAuthenticated, async (req, res) => {
 });
 app.get('/api/search', isAuthenticated, async (req, res) => {
     const query = req.query.q;
-    console.log(`Search query: ${query}`); // Log the query parameter
-
     if (!query) {
         return res.status(400).json({ error: 'Query parameter is required' });
     }

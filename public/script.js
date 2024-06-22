@@ -4,24 +4,17 @@ async function checkAuthStatus() {
         if (response.ok) {
             const userData = await response.json();
             const username = userData.username;
-            document.getElementById('welcomeMsg').innerText = `Welcome, ${username}!`; // Display welcome message
-        } else {
-            document.getElementById('welcomeMsg').innerText = ''; // Clear welcome message if not logged in
-        }
+        } 
     } catch (error) {
         console.error('Error checking auth status:', error);
     }
 }
-
-
-
 document.addEventListener('DOMContentLoaded', () => {
     checkAuthStatus();
     fetchRecentMangaUpdates();
     fetchRandomManga();
-    
-// Call loadLastVisitedManga when the page loads or as needed
-loadLastVisitedManga();
+    // Call loadLastVisitedManga when the page loads or as needed
+    loadLastVisitedManga();
 });
 async function fetchRandomManga() {
     try {
@@ -406,7 +399,6 @@ async function saveHistory(mangaId, chapter) {
         if (!response.ok) {
             throw new Error('Failed to save history');
         }
-        console.log('History saved successfully');
     } catch (error) {
         console.error('Error saving history:', error.message);
     }
@@ -437,7 +429,6 @@ async function fetchMangaDetails(mangaId, chapterId) {
 
         // Fetch chapter number
         const chapterResponse = await fetch(`https://api.mangadex.org/chapter/${chapterId}`);
-        console.log(chapterId);
         const chapterData = await chapterResponse.json();
         if (chapterData.result !== 'ok' || chapterData.response !== 'entity') {
             throw new Error('Failed to fetch chapter number');
