@@ -235,7 +235,7 @@ app.post('/api/reset-password/:token', async (req, res) => {
     }
 });
 
-// Endpoint to add manga to read list
+// Endpoint to add manga to read(favorite) list
 app.post('/api/readList', isAuthenticated, async (req, res) => {
     const { mangaId, status } = req.body;
     const userId = req.session.user.id;
@@ -302,11 +302,12 @@ app.get('/api/history/:userId', isAuthenticated, async (req, res) => {
     }
 });
 // Random manga endpoint with query parameters
-app.get('/api/random', isAuthenticated, async (req, res) => {
+//, 'suggestive', 'erotica', 'pornographic'
+app.get('/api/random', async (req, res) => {
     try {
         const queryParams = {
             'includes[]': ['manga', 'cover_art', 'author', 'artist', 'tag', 'creator'],
-            'contentRating[]': ['safe', 'suggestive', 'erotica', 'pornographic'],
+            'contentRating[]': ['safe'],
             includedTagsMode: 'AND',
             limit: 100
         };
@@ -344,7 +345,7 @@ app.get('/api/random', isAuthenticated, async (req, res) => {
             coverArtUrl: coverArtUrl ? `https://uploads.mangadex.org/covers/${randomManga.id}/${coverArtUrl}` : '',
             chapters
         };
-
+        console.log('Random Manga Data:', mangaDataWithCoverArt);
         res.json(mangaDataWithCoverArt);
     } catch (error) {
         console.error('Error fetching random manga:', error);
@@ -353,7 +354,7 @@ app.get('/api/random', isAuthenticated, async (req, res) => {
 });
 
 // Recent manga updates endpoint with query parameters
-app.get('/api/recent-updates', isAuthenticated, async (req, res) => {
+app.get('/api/recent-updates', async (req, res) => {
     try {
         const queryParams = {
             limit: 9,
@@ -365,14 +366,14 @@ app.get('/api/recent-updates', isAuthenticated, async (req, res) => {
 
         const response = await axios.get('https://api.mangadex.org/manga', { params: queryParams });
         const recentMangaUpdates = response.data.data;
-
+        console.log('Recent Manga Updates:', recentMangaUpdates);
         res.json(recentMangaUpdates);
     } catch (error) {
         console.error('Error fetching recent manga updates:', error);
         res.status(500).json({ message: error.message });
     }
 });
-app.get('/api/search', isAuthenticated, async (req, res) => {
+app.get('/api/search', async (req, res) => {
     const query = req.query.q;
     if (!query) {
         return res.status(400).json({ error: 'Query parameter is required' });
@@ -400,6 +401,7 @@ app.get('/api/search', isAuthenticated, async (req, res) => {
         }
 
         const mangas = response.data.data;
+        console.log('Search Results:', mangas);
         res.json(mangas);
     } catch (error) {
         console.error('Error searching manga:', error.response ? error.response.data : error.message);
@@ -413,7 +415,7 @@ const fetchMangaDetailsWithCoverArt = async (mangaId) => {
         const mangaData = mangaResponse.data.data;
         
         // Extract relevant details such as title and latest chapter
-        const title = mangaData.attributes.title["en"]; // Assuming you want the English title
+        const title = mangaData.attributes.title["en"]; 
         const latestChapter = mangaData.relationships.find(rel => rel.type === "chapter")?.id; // Get the ID of the latest chapter
 
         // Fetch cover art details from MangaDex API
@@ -438,7 +440,7 @@ app.get('/api/favorite/:userId',isAuthenticated, async (req, res) => {
     const userId = req.params.userId;
     try {
         const db = await connectDB(); // Connect to MongoDB
-        const readListCollection = db.collection('readList'); // Assuming readList is the collection name
+        const readListCollection = db.collection('readList'); 
 
         // Fetch user's favorite manga from readList collection
         const favorites = await readListCollection.find({ userId }).toArray();
@@ -466,9 +468,9 @@ app.put('/api/updateReadStatus',isAuthenticated,  async (req, res) => {
 
     try {
         const db = await connectDB(); // Connect to MongoDB
-        const readListCollection = db.collection('readList'); // Assuming readList is the collection name
+        const readListCollection = db.collection('readList'); 
 
-        // Assuming you have a MongoDB collection named 'readList'
+    
         const result = await readListCollection.updateOne(
             { userId: userId, mangaId: mangaId },
             { $set: { status: status } }
@@ -534,7 +536,7 @@ app.get('/api/user-details/:userId', isAuthenticated, async (req, res) => {
     }
 });
 // Endpoint to clear the last visited manga for a user
-app.delete('/api/clear-last-visited/:userId', isAuthenticated, async (req, res) => {
+app.delete('/api/clear-last-visited/:userId', async (req, res) => {
     const userId = req.params.userId;
     try {
         const db = await connectDB();
@@ -553,7 +555,7 @@ app.delete('/api/clear-last-visited/:userId', isAuthenticated, async (req, res) 
     }
 });
 
-app.delete('/api/clear-favorite/:userId', isAuthenticated, async (req, res) => {
+app.delete('/api/clear-favorite/:userId', async (req, res) => {
     const userId = req.params.userId;
     try {
         const db = await connectDB();
@@ -571,7 +573,7 @@ app.delete('/api/clear-favorite/:userId', isAuthenticated, async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
-app.put('/api/change-password/:userId', isAuthenticated, async (req, res) => {
+app.put('/api/change-password/:userId', async (req, res) => {
     const userId = req.params.userId;
     const { password } = req.body;
 
@@ -596,5 +598,5 @@ app.put('/api/change-password/:userId', isAuthenticated, async (req, res) => {
     }
 });
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
+    console.log(`manga app listening at http://localhost:${port}`);
 });

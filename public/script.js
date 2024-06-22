@@ -125,11 +125,11 @@ async function toggleFavorite(mangaId) {
         const data = await response.json();
 
         if (!response.ok) {
-            alert(data.error);
+            
             favoriteCheckbox.checked = !favoriteCheckbox.checked; // Revert the checkbox state if there was an error
         } else {
             const message = favoriteCheckbox.checked ? 'Manga added to reading list' : 'Manga removed from reading list';
-            alert(message);
+        
         }
     } catch (error) {
         console.error('Error toggling favorite:', error);
@@ -149,11 +149,11 @@ async function toggleFavorites(mangaId) {
         const data = await response.json();
 
         if (!response.ok) {
-            alert(data.error);
+            
             favoriteCheckbox.checked = !favoriteCheckbox.checked; // Revert the checkbox state if there was an error
         } else {
             const message = favoriteCheckbox.checked ? 'Manga added to reading list' : 'Manga removed from reading list';
-            alert(message);
+          
         }
     } catch (error) {
         console.error('Error toggling favorite:', error);
